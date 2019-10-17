@@ -1,11 +1,5 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using NJsonSchema;
-using PCApplication.Configuration;
-using PCApplication.UserControls;
-using System.Diagnostics;
+﻿using PCApplication.UserControls;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace PCApplication.Services {
