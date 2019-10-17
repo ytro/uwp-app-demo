@@ -15,7 +15,7 @@ namespace PCApplication {
             this.InitializeComponent();
 
             // Set the DataContext
-            DataContext = ServiceLocator.ServiceProvider.GetService<LoginViewModel>();
+            DataContext = ServiceLocator.Instance.GetService<LoginViewModel>();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e) {
@@ -23,7 +23,7 @@ namespace PCApplication {
         }
 
         private void InitializeNavigationService() {
-            INavigationService navigationService = ServiceLocator.ServiceProvider.GetService<INavigationService>();
+            INavigationService navigationService = ServiceLocator.Instance.GetService<INavigationService>();
             navigationService.Initialize(Frame);
         }
 

@@ -11,7 +11,7 @@ namespace PCApplication {
             this.InitializeComponent();
 
             // Set the DataContext
-            DataContext = ServiceLocator.ServiceProvider.GetService<MainViewModel>();
+            DataContext = ServiceLocator.Instance.GetService<MainViewModel>();
         }
     }
 }

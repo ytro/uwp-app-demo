@@ -8,8 +8,7 @@ namespace PCApplication.Common {
     /// </summary>
     class ServiceLocator {
         static private readonly IServiceCollection _serviceCollection = new ServiceCollection();
-        static private ServiceProvider _serviceProvider;
-        static private ServiceLocator _dependencyLocator = null;
+        static private ServiceProvider _serviceProvider = null;
 
         static public void ConfigureServices() {
             _serviceCollection.AddSingleton<IRestService, RestService>();
@@ -21,13 +20,7 @@ namespace PCApplication.Common {
             _serviceProvider = _serviceCollection.BuildServiceProvider();
         }
 
-        static public ServiceLocator ServiceProvider {
-            get {
-                if (_dependencyLocator == null)
-                    _dependencyLocator = new ServiceLocator();
-                return _dependencyLocator;
-            }
-        }
+        static public ServiceLocator Instance { get; } = new ServiceLocator();
 
         public T GetService<T>() {
             return _serviceProvider.GetService<T>();
