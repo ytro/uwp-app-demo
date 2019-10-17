@@ -1,0 +1,97 @@
+﻿<Page
+    x:Class="PCApplication.LoginView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PCApplication"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="using:PCApplication.Converters"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.Resources>
+        <converters:BooleanToBrushConverter x:Key="BooleanToBrushConverter"/>
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <converters:InvertedBooleanConverter x:Key="InvertedBooleanConverter"/>
+    </Page.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="3*"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+
+        <Grid 
+            Name="ContentGrid" 
+            Padding="12,20"
+            MaxWidth="360"
+            Grid.Row="0"
+            VerticalAlignment="Center">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock
+                Name="HeaderTextBlock"
+                Visibility="Collapsed"
+                Text="Identification"
+                Style="{StaticResource TitleTextBlockStyle}"/>
+
+            <TextBlock
+                Text="Saisissez votre mot de passe d'administrateur pour vous connecter."
+                Padding="0,8,0,8"
+                Style="{StaticResource BodyTextBlockStyle}"
+                Grid.Row="1"/>
+              
+            <PasswordBox
+                Name="PasswordBox"
+                PlaceholderText="Mot de passe"
+                Password="{Binding Path=Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                IsEnabled="{Binding Path=IsBusy, Mode=OneWay, Converter={StaticResource InvertedBooleanConverter}}"
+                KeyDown="PasswordBox_KeyDown"
+                Margin="0,0,0,4"
+                Grid.Row="2" />
+
+            <Button 
+                Name="LoginButton"
+                Content="Se connecter"
+                Command="{Binding LoginCommand}"
+                Background="{ThemeResource SystemControlBackgroundAccentBrush}"
+                Foreground="White"
+                HorizontalAlignment="Stretch"
+                Margin="0,4,0,0"
+                Grid.Row="3"/>
+
+            <ProgressBar
+                IsIndeterminate="{Binding Path=IsBusy, Mode=OneWay}"
+                Background="Transparent"
+                Margin="0,10,0,0"
+                Grid.Row="4"/>
+        </Grid>
+        <Grid Grid.Row="1" Background="LightGray">
+            <Border Name="Logo">
+                <Image Source="ms-appx:///Assets/LogoPolymtl.png" HorizontalAlignment="Center" VerticalAlignment="Top" />
+            </Border>
+        </Grid>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="DisplayModeStates">
+                <VisualState x:Name="Wide">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="600" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <Setter Target="HeaderTextBlock.Visibility" Value="Visible"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="Compact">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="0" />
+                    </VisualState.StateTriggers>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+    </Grid>
+</Page>
+
