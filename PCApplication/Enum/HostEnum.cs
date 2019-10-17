@@ -4,10 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PCApplication
-{
-    public enum HostEnum
-    {
+namespace PCApplication {
+    public enum HostEnum {
         Miner1 = 1,
         Miner2 = 2,
         Miner3 = 3,

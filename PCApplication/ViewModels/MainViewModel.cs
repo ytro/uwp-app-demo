@@ -9,15 +9,12 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace PCApplication.ViewModels
-{
+namespace PCApplication.ViewModels {
     /// <summary>
     /// Viewmodel class for the main view (which hosts the accounts, logs and blockchain subviews)
     /// </summary>
-    public class MainViewModel : ViewModelBase
-    {
-        public MainViewModel()
-        {
+    public class MainViewModel : ViewModelBase {
+        public MainViewModel() {
         }
     }
 }

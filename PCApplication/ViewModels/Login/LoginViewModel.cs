@@ -13,13 +13,11 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Threading;
 
-namespace PCApplication.ViewModels
-{
+namespace PCApplication.ViewModels {
     /// <summary>
     /// The viewmodel class for the Login view.
     /// </summary>
-    public class LoginViewModel : ViewModelBase
-    {
+    public class LoginViewModel : ViewModelBase {
         private readonly string _username = "admin";
         private string _password = "";
         private bool _isBusy = false;
@@ -33,53 +31,45 @@ namespace PCApplication.ViewModels
         public IRestService RestService { get; }
         public INavigationService NavigationService { get; }
 
-        public string Username
-        {
+        public string Username {
             get => _username;
         }
 
-        public string Password
-        {
+        public string Password {
             get => _password;
-            set
-            {
+            set {
                 _password = value;
                 LoginCommand.RaiseCanExecuteChanged();
             }
         }
 
         // Represents the busy state (true if a login attempt is under execution)
-        public bool IsBusy
-        {
+        public bool IsBusy {
             get => _isBusy;
-            set { _isBusy = value;
+            set {
+                _isBusy = value;
                 RaisePropertyChanged();
                 LoginCommand.RaiseCanExecuteChanged();
             }
         }
 
-        public RelayCommand LoginCommand {get; }
-        private bool LoginCommandCanExecute()
-        {
+        public RelayCommand LoginCommand { get; }
+        private bool LoginCommandCanExecute() {
             return !IsBusy && !String.IsNullOrEmpty(Password);
 
         }
-        private async void LoginCommandExecute()
-        {
+        private async void LoginCommandExecute() {
             // Set to busy
             IsBusy = true;
-            
+
             // We delegate the login business logic to RestService.Login()
             bool loggedIn = await RestService.Login(Username, Password);
-            if (loggedIn)
-            {
+            if (loggedIn) {
                 NavigationService.Navigate<MainView>();
-            }
-            else
-            {
+            } else {
                 IsBusy = false;
             }
-        }  
+        }
 
     }
 }

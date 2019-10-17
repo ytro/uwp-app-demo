@@ -21,54 +21,44 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace PCApplication
-{
-    public sealed partial class LoginView : Page
-    {
+namespace PCApplication {
+    public sealed partial class LoginView : Page {
         LoginViewModel ViewModel => DataContext as LoginViewModel;
 
-        public LoginView()
-        {
+        public LoginView() {
             this.InitializeComponent();
 
             // Set the DataContext
             DataContext = ServiceLocator.ServiceProvider.GetService<LoginViewModel>();
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
-        {
+        protected override void OnNavigatedTo(NavigationEventArgs e) {
             InitializeNavigationService();
         }
 
-        private void InitializeNavigationService()
-        {
+        private void InitializeNavigationService() {
             INavigationService navigationService = ServiceLocator.ServiceProvider.GetService<INavigationService>();
             navigationService.Initialize(Frame);
         }
 
-        private void UsernameBox_KeyDown(object sender, KeyRoutedEventArgs e)
-        {
+        private void UsernameBox_KeyDown(object sender, KeyRoutedEventArgs e) {
             if (e.Key == Windows.System.VirtualKey.Enter)
                 LoginButton_PerformAction();
         }
 
-        private void PasswordBox_KeyDown(object sender, KeyRoutedEventArgs e)
-        {
+        private void PasswordBox_KeyDown(object sender, KeyRoutedEventArgs e) {
             if (e.Key == Windows.System.VirtualKey.Enter)
                 LoginButton_PerformAction();
         }
 
         private void LoginButton_PerformAction() {
-            try
-            {
-                if (LoginButton.IsEnabled)
-                {
+            try {
+                if (LoginButton.IsEnabled) {
                     var ap = new ButtonAutomationPeer(LoginButton);
                     var ip = ap.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
                     ip?.Invoke();
                 }
-            }
-            catch { } // The only exception that can be thrown is ElementNotEnabled and doesn't need to be handled
+            } catch { } // The only exception that can be thrown is ElementNotEnabled and doesn't need to be handled
         }
 
 

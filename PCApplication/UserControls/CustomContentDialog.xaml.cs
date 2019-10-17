@@ -15,20 +15,16 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 
-namespace PCApplication.UserControls
-{
+namespace PCApplication.UserControls {
     /// <summary>
     /// A custom content dialog (modal window) with streamlined formatting. Can be used to display messages (such as errors) to the user.
     /// </summary>
-    public partial class CustomContentDialog : ContentDialog
-    {
-        public CustomContentDialog()
-        {
+    public partial class CustomContentDialog : ContentDialog {
+        public CustomContentDialog() {
             InitializeComponent();
         }
 
-        public CustomContentDialog(string message, string title)
-        {
+        public CustomContentDialog(string message, string title) {
             InitializeComponent();
 
             Message = message;
@@ -36,21 +32,17 @@ namespace PCApplication.UserControls
             PrimaryButtonText = "OK";
         }
 
-        public string Message
-        {
-            get
-            {
+        public string Message {
+            get {
                 return MessageLabel.ToString();
             }
-            set
-            {
+            set {
                 MessageLabel.Text = value;
             }
         }
 
         // Spawns a content dialog (modal)
-        public static async Task<bool> ShowAsync(string message, string title = null, string primary = null, string secondary = null)
-        {
+        public static async Task<bool> ShowAsync(string message, string title = null, string primary = null, string secondary = null) {
             var dialog = new CustomContentDialog();
             dialog.Title = title;
             dialog.Message = message;

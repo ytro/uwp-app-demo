@@ -16,15 +16,12 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace PCApplication
-{
+namespace PCApplication {
 
-    public sealed partial class MainView : Page
-    {
+    public sealed partial class MainView : Page {
         MainViewModel ViewModel => DataContext as MainViewModel;
 
-        public MainView()
-        {
+        public MainView() {
             this.InitializeComponent();
 
             // Set the DataContext

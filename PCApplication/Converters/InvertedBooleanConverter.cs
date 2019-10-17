@@ -1,13 +1,10 @@
-﻿namespace PCApplication.Converters
-{
+﻿namespace PCApplication.Converters {
     /// <summary>
     /// A boolean to negated boolean IValueConverter
     /// </summary>
-    public class InvertedBooleanConverter : BooleanConverterBase<bool>
-    {
+    public class InvertedBooleanConverter : BooleanConverterBase<bool> {
         public InvertedBooleanConverter()
-            : base(trueValue: false, falseValue: true)
-        {
+            : base(trueValue: false, falseValue: true) {
         }
     }
 }
