@@ -27,12 +27,8 @@ namespace PCApplication {
             navigationService.Initialize(Frame);
         }
 
-        private void UsernameBox_KeyDown(object sender, KeyRoutedEventArgs e) {
-            if (e.Key == Windows.System.VirtualKey.Enter)
-                LoginButton_PerformAction();
-        }
-
         private void PasswordBox_KeyDown(object sender, KeyRoutedEventArgs e) {
+            // Handles the Enter key for automatic Login button press
             if (e.Key == Windows.System.VirtualKey.Enter)
                 LoginButton_PerformAction();
         }
