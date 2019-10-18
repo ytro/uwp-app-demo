@@ -1,5 +1,8 @@
-﻿using PCApplication.UserControls;
+﻿using Newtonsoft.Json.Linq;
+using PCApplication.Configuration;
+using PCApplication.UserControls;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace PCApplication.Services {
@@ -15,9 +18,37 @@ namespace PCApplication.Services {
         public RestService() { }
 
         public async Task<bool> Login(string username, string password) {
-            CustomContentDialog.ShowAsync("Logged in", primary: "Ok");
-            // Or show another dialog if there's an error, and return false
-            return true;
+            string requestUri = ConfigManager.GetBaseServerUri() + "/admin/login";
+            try {
+                // HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, requestUri);
+                // For now, test the request using a random online website
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, $"https://httpbin.org/post");
+
+                string json = new JObject
+                {
+                   { "usager", "admin" },
+                   { "mot_de_passe", password}
+                }.ToString();
+
+                request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                HttpResponseMessage response = await _client.SendAsync(request);
+
+                if (response.IsSuccessStatusCode) { // Represents a code from 200 to 299
+                    CustomContentDialog.ShowAsync("Logged in\n" + response.ToString(), title: "POST Reponse", primary: "OK");
+                    return true;
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400
+                    CustomContentDialog.ShowAsync("Error 400:\n" + response.ToString(), title: "POST Reponse", primary: "OK");
+                    return false;
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 403
+                    CustomContentDialog.ShowAsync("Error 403:\n" + response.ToString(), title: "POST Reponse", primary: "OK");
+                    return false;
+                }
+            } catch { }
+
+            return false;
         }
 
         public async Task<bool> Logout() {
