@@ -35,15 +35,14 @@ namespace PCApplication.Services {
                 HttpResponseMessage response = await _client.SendAsync(request);
 
                 if (response.IsSuccessStatusCode) { // Represents a code from 200 to 299
-                    CustomContentDialog.ShowAsync("Logged in\n" + response.ToString(), title: "POST Reponse", primary: "OK");
                     return true;
                 }
                 else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400
-                    CustomContentDialog.ShowAsync("Error 400:\n" + response.ToString(), title: "POST Reponse", primary: "OK");
+                    CustomContentDialog.ShowAsync("Erreur 400:\n" + response.ToString(), title: "Erreur", primary: "OK");
                     return false;
                 }
                 else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 403
-                    CustomContentDialog.ShowAsync("Error 403:\n" + response.ToString(), title: "POST Reponse", primary: "OK");
+                    CustomContentDialog.ShowAsync("Erreur 403:\n" + response.ToString(), title: "Erreur", primary: "OK");
                     return false;
                 }
             } catch { }
