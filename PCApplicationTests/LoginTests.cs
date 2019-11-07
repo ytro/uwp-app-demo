@@ -3,8 +3,10 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PCApplication;
+using PCApplication.JsonSchemas;
 using PCApplication.Services;
 using PCApplication.ViewModels;
+using Windows.UI.Xaml.Media.Animation;
 
 namespace PCApplicationTests {
     [TestClass]
@@ -40,15 +42,15 @@ namespace PCApplicationTests {
             throw new NotImplementedException();
         }
 
-        public Task<object> GetLogs(HostEnum source, int lastReceived) {
-            throw new NotImplementedException();
-        }
-
         public Task<bool> Login(string username, string password) {
             throw new NotImplementedException();
         }
 
         public Task<bool> Logout() {
+            throw new NotImplementedException();
+        }
+
+        Task<LogsResponse> IRestService.GetLogs(HostEnum source, int lastReceived) {
             throw new NotImplementedException();
         }
     }
@@ -67,6 +69,14 @@ namespace PCApplicationTests {
         }
 
         public bool Navigate(Type viewType, object parameter = null) {
+            throw new NotImplementedException();
+        }
+
+        public bool Navigate<T>(object parameter = null, NavigationTransitionInfo infoOverride = null) {
+            throw new NotImplementedException();
+        }
+
+        public bool Navigate(Type viewType, object parameter = null, NavigationTransitionInfo infoOverride = null) {
             throw new NotImplementedException();
         }
     }
