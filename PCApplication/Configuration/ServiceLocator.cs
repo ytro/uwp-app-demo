@@ -15,7 +15,10 @@ namespace PCApplication.Common {
             _serviceCollection.AddSingleton<INavigationService, NavigationService>();
 
             _serviceCollection.AddTransient<LoginViewModel>();
-            _serviceCollection.AddTransient<MainViewModel>();
+            _serviceCollection.AddTransient<MainShellViewModel>();
+            _serviceCollection.AddTransient<LogsMainViewModel>();
+            _serviceCollection.AddTransient<AccountsMainViewModel>();
+            _serviceCollection.AddTransient<BlockchainMainViewModel>();
 
             _serviceProvider = _serviceCollection.BuildServiceProvider();
         }

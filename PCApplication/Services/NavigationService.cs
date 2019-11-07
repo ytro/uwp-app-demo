@@ -1,5 +1,6 @@
 ﻿using System;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Animation;
 
 namespace PCApplication.Services {
     /// <summary>
@@ -19,12 +20,14 @@ namespace PCApplication.Services {
         }
 
 
-        public bool Navigate<T>(object parameter = null) {
-            return Frame.Navigate(typeof(T), parameter);
+        public bool Navigate<T>(object parameter = null, NavigationTransitionInfo infoOverride = null) {
+            
+            return Frame.Navigate(typeof(T), parameter, infoOverride);
         }
 
-        public bool Navigate(Type viewType, object parameter = null) {
-            return Frame.Navigate(viewType, parameter);
+        public bool Navigate(Type viewType, object parameter = null, NavigationTransitionInfo infoOverride = null) {
+            
+            return Frame.Navigate(viewType, parameter, infoOverride);
         }
     }
 
@@ -34,9 +37,9 @@ namespace PCApplication.Services {
 
         void Initialize(object frame);
 
-        bool Navigate<T>(object parameter = null);
+        bool Navigate<T>(object parameter = null, NavigationTransitionInfo infoOverride = null);
 
-        bool Navigate(Type viewType, object parameter = null);
+        bool Navigate(Type viewType, object parameter = null, NavigationTransitionInfo infoOverride = null);
     }
 
 }

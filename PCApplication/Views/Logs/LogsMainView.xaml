@@ -1,0 +1,57 @@
+﻿<Page
+    x:Class="PCApplication.Views.LogsMainView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PCApplication.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:Microsoft.UI.Xaml.Controls"
+    xmlns:converters="using:PCApplication.Converters"
+    xmlns:sys="using:System"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.Resources>
+        <converters:InvertedBooleanConverter x:Key="InvertedBooleanConverter"/>    
+    </Page.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="36"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <CommandBar IsDynamicOverflowEnabled="False" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" VerticalAlignment="Center" Grid.Row="0" DefaultLabelPosition="Right" Background="Transparent">
+            <CommandBar.Content>
+                <ProgressRing IsActive="{Binding IsBusy}" />
+            </CommandBar.Content>
+            <AppBarButton Icon="Filter" Click="Filtrer_Click" Label="Filtrer la provenance" LabelPosition="Default" IsEnabled="{Binding IsBusy,Mode=OneWay, Converter={StaticResource InvertedBooleanConverter}}">
+                <AppBarButton.Flyout>
+                    <MenuFlyout x:Name="menuFiltrer">
+                        <MenuFlyoutItem Text="Mineur 1"/>
+                        <MenuFlyoutItem Text="Mineur 2"/>
+                        <MenuFlyoutItem Text="Mineur 3"/>
+                        <MenuFlyoutItem Text="Serveur web" />
+                    </MenuFlyout>
+                </AppBarButton.Flyout>
+            </AppBarButton>
+            <AppBarSeparator/>
+            <AppBarButton Icon="Refresh" Click="Actualiser_Click" Label="Actualiser les logs" LabelPosition="Default" IsEnabled="{Binding IsBusy,Mode=OneWay, Converter={StaticResource InvertedBooleanConverter}}">
+                <AppBarButton.Flyout>
+                    <MenuFlyout x:Name="menuActualiser">
+                        <MenuFlyoutItem Text="Mineur 1" Click="MenuFlyoutItem1_Click" />
+                        <MenuFlyoutItem Text="Mineur 2" Click="MenuFlyoutItem2_Click" />
+                        <MenuFlyoutItem Text="Mineur 3" Click="MenuFlyoutItem3_Click" />
+                        <MenuFlyoutItem Text="Serveur web" Click="MenuFlyoutItem4_Click" />
+                    </MenuFlyout>
+                </AppBarButton.Flyout>
+            </AppBarButton>
+        </CommandBar>
+        <TextBox
+            Grid.Row="1"
+            FontFamily="Courier New"
+            Text="{Binding DisplayText, Mode=OneWay}"
+            IsReadOnly="True"
+            TextWrapping="Wrap"
+            ScrollViewer.VerticalScrollBarVisibility="Auto"
+        />
+    </Grid>
+</Page>

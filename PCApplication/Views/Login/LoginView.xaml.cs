@@ -40,7 +40,7 @@ namespace PCApplication {
                     var ip = ap.GetPattern(PatternInterface.Invoke) as IInvokeProvider;
                     ip?.Invoke();
                 }
-            } catch { } // The only exception that can be thrown is ElementNotEnabled and doesn't need to be handled
+            } catch { }
         }
 
 
