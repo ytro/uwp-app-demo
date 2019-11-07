@@ -63,7 +63,7 @@ namespace PCApplication.ViewModels {
             IsBusy = true;
             bool loggedIn = await RestService.Login(Username, Password);
             if (loggedIn) {
-                NavigationService.Navigate<MainShellView>(infoOverride: new DrillInNavigationTransitionInfo());
+                NavigationService.Navigate<MainShellView>();
             } else {
                 IsBusy = false;
             }

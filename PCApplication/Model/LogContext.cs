@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PCApplication.JsonSchemas;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,13 +16,13 @@ namespace PCApplication.Models
 
         public List<LogEntry> Logs = new List<LogEntry>();
 
-        public int Update(LogsSchema.RootObject rootObj, HostEnum source)
+        public int Update(LogsResponse rootObj, HostEnum source)
         {
-            foreach (LogsSchema.Information information in rootObj.Information)
+            foreach (Information information in rootObj.Information)
             {
                 Logs.Add(new LogEntry(information.No, information.Severite, information.Heure, source, information.Message));
             }
-            return Logs.Count;
+            return rootObj.Information[rootObj.Information.Count - 1].No;
         }
 
         public string GetLogsText() {

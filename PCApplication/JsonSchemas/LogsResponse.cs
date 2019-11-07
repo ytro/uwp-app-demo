@@ -5,8 +5,8 @@
 //----------------------
 using System.Collections.Generic;
 
-namespace PCApplication.LogsSchema {
-    public class RootObject {
+namespace PCApplication.JsonSchemas {
+    public class LogsResponse {
         [Newtonsoft.Json.JsonProperty("information", Required = Newtonsoft.Json.Required.Always)]
         public List<Information> Information { get; set; }
     }

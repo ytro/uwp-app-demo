@@ -31,8 +31,8 @@ namespace PCApplication.Views {
         }
 
         private void Actualiser_Click(object sender, RoutedEventArgs e) {
-            if (menuActualiser.IsOpen)
-                menuActualiser.Hide();
+           // if (menuActualiser.IsOpen)
+             //   menuActualiser.Hide();
         }
 
         private void MenuFlyoutItem1_Click(object sender, RoutedEventArgs e) {
@@ -55,7 +55,19 @@ namespace PCApplication.Views {
             if (menuFiltrer.IsOpen)
                 menuFiltrer.Hide();
         }
-    }
 
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var grid = (Grid)VisualTreeHelper.GetChild(TxtConsole, 0);
+            for (var i = 0; i <= VisualTreeHelper.GetChildrenCount(grid) - 1; i++)
+            {
+                object obj = VisualTreeHelper.GetChild(grid, i);
+                if (!(obj is ScrollViewer)) continue;
+                ((ScrollViewer)obj).ChangeView(0.0f, ((ScrollViewer)obj).ExtentHeight, 1.0f);
+                break;
+            }
+        }
+    
+    }
 
 }

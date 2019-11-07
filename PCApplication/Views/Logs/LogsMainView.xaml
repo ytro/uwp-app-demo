@@ -46,12 +46,15 @@
             </AppBarButton>
         </CommandBar>
         <TextBox
+            x:Name="TxtConsole"
             Grid.Row="1"
             FontFamily="Courier New"
             Text="{Binding DisplayText, Mode=OneWay}"
             IsReadOnly="True"
             TextWrapping="Wrap"
             ScrollViewer.VerticalScrollBarVisibility="Auto"
+            ScrollViewer.VerticalScrollMode="Auto"
+            TextChanged="TextBox_TextChanged"
         />
     </Grid>
 </Page>
