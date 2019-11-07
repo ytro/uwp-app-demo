@@ -12,6 +12,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Threading;
+using PCApplication.Views;
+using Windows.UI.Xaml.Media.Animation;
 
 namespace PCApplication.ViewModels {
     /// <summary>
@@ -43,7 +45,6 @@ namespace PCApplication.ViewModels {
             }
         }
 
-        // Represents the busy state (true if a login attempt is under execution)
         public bool IsBusy {
             get => _isBusy;
             set {
@@ -59,13 +60,10 @@ namespace PCApplication.ViewModels {
 
         }
         private async void LoginCommandExecute() {
-            // Set to busy
             IsBusy = true;
-
-            // We delegate the login business logic to RestService.Login()
             bool loggedIn = await RestService.Login(Username, Password);
             if (loggedIn) {
-                NavigationService.Navigate<MainView>();
+                NavigationService.Navigate<MainShellView>(infoOverride: new DrillInNavigationTransitionInfo());
             } else {
                 IsBusy = false;
             }
