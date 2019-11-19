@@ -1,0 +1,36 @@
+﻿<ContentDialog
+    x:Class="PCApplication.Views.AddAccountContentDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:PCApplication.Views.Accounts"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Ajouter compte"
+    PrimaryButtonText="Ajouter"
+    SecondaryButtonText="Annuler"
+    IsPrimaryButtonEnabled="{Binding CanAddAccount}">
+   
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        
+        <TextBox x:Name="username" 
+                 Text="{Binding Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                     PlaceholderText="Nom de l'usager"
+                     Width="300" HorizontalAlignment="Left"/>
+        <PasswordBox 
+            x:Name="password" 
+            Password="{Binding Password, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
+            Margin="0,5"
+            Grid.Row="1" 
+            PlaceholderText="Mot de passe" />
+
+        <CheckBox IsChecked="{Binding IsEditor, Mode=TwoWay}" 
+                  Content="Compte éditeur" 
+                  Grid.Row="2"/>
+    </Grid>
+</ContentDialog>

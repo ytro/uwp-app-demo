@@ -137,12 +137,16 @@
     <Compile Include="Services\RestService.cs" />
     <Compile Include="Strings\StringResources.cs" />
     <Compile Include="ViewModels\Accounts\AccountsMainViewModel.cs" />
+    <Compile Include="ViewModels\Accounts\AddAccountViewModel.cs" />
     <Compile Include="ViewModels\Blockchain\BlockchainMainViewModel.cs" />
     <Compile Include="ViewModels\Logs\LogsMainViewModel.cs" />
     <Compile Include="ViewModels\MainShellViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="Views\Accounts\AccountsMainView.xaml.cs">
       <DependentUpon>AccountsMainView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\AddAccountContentDialog.xaml.cs">
+      <DependentUpon>AddAccountContentDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Blockchain\BlockchainMainView.xaml.cs">
       <DependentUpon>BlockchainMainView.xaml</DependentUpon>
@@ -190,6 +194,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="Views\Accounts\AccountsMainView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\AddAccountContentDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

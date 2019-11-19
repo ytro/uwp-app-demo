@@ -23,6 +23,7 @@ namespace PCApplication.Services {
         public RestService() { }
 
         public async Task<bool> Login(string username, string password) {
+            return true;
             string requestUri = ConfigManager.GetBaseServerUri() + "/usager/login";
             try {
                 //HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, $"https://httpbin.org/post");
@@ -98,6 +99,7 @@ namespace PCApplication.Services {
         public async Task<bool> CreateAccount(string username, string password, bool isEditor) {
             string requestUri = ConfigManager.GetBaseServerUri() + "/admin/creationcompte";
 
+            // Prepare request
             string json = new JObject
             {
                 { "usager", username },
@@ -105,7 +107,35 @@ namespace PCApplication.Services {
                 { "edition", isEditor }
             }.ToString();
 
-            throw new System.NotImplementedException();
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, requestUri);
+            request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            // Send request
+            try {
+                HttpResponseMessage response = await _client.SendAsync(request);
+
+                if (response.IsSuccessStatusCode) { // 200-299
+                    return true;
+                } else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400 Bad request
+                    CustomContentDialog.ShowAsync("Erreur 400: Mauvaise requête", title: "Erreur", primary: "OK");
+                    return false;
+                } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 401 Unauthorized
+                    CustomContentDialog.ShowAsync("Erreur 403: Non authorisé", title: "Erreur", primary: "OK");
+                    return false;
+                } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
+                    CustomContentDialog.ShowAsync("Erreur 404: Non trouvé", title: "Erreur", primary: "OK");
+                    return false;
+                } else if (response.StatusCode == System.Net.HttpStatusCode.Conflict) { // 409
+                    CustomContentDialog.ShowAsync("Erreur 409: Un compte portant le même nom existe déjà", title: "Erreur", primary: "OK");
+                    return false;
+                } else {
+                    CustomContentDialog.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
+                    return false;
+                }
+            } catch {
+                CustomContentDialog.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
+                return false;
+            }
         }
 
         public async Task<bool> DeleteAccount(string username) {
@@ -150,36 +180,41 @@ namespace PCApplication.Services {
             request.Content = new StringContent(json, Encoding.UTF8, "application/json");
 
             // Send request
-            HttpResponseMessage response = await _client.SendAsync(request);
+            try {
+                HttpResponseMessage response = await _client.SendAsync(request);
 
-            if (response.IsSuccessStatusCode) { // 200-299
-                // Get response
-                string responseContent = await response.Content.ReadAsStringAsync();
+                if (response.IsSuccessStatusCode) { // 200-299
+                    // Get response
+                    string responseContent = await response.Content.ReadAsStringAsync();
 
-                // Check JSON reponse against schema
-                JsonSchema schema = JsonSchema.FromType<LogsResponse>();
-                var errors = schema.Validate(responseContent);
-                if (errors.Count > 0) {
-                    // Debug.WriteLine(error.Path + ": " + error.Kind);
+                    // Check JSON reponse against schema
+                    JsonSchema schema = JsonSchema.FromType<LogsResponse>();
+                    var errors = schema.Validate(responseContent);
+                    if (errors.Count > 0) {
+                        // Debug.WriteLine(error.Path + ": " + error.Kind);
+                        return null;
+                    }
+
+                    // Mocked response
+                    // responseContent = StringResources.GetString("mockValidLogsJson");
+
+                    // Return deserialized JSON object
+                    return JsonConvert.DeserializeObject<LogsResponse>(responseContent);
+
+                } else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400 Bad request
+                    CustomContentDialog.ShowAsync("Erreur 400: Mauvaise requête", title: "Erreur", primary: "OK");
+                    return null;
+                } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 401 Unauthorized
+                    CustomContentDialog.ShowAsync("Erreur 403: Non authorisé", title: "Erreur", primary: "OK");
+                    return null;
+                } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
+                    CustomContentDialog.ShowAsync("Erreur 404: Non trouvé", title: "Erreur", primary: "OK");
+                    return null;
+                } else {
+                    CustomContentDialog.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
                     return null;
                 }
-
-                // Mocked response
-                // responseContent = StringResources.GetString("mockValidLogsJson");
-
-                // Return deserialized JSON object
-                return JsonConvert.DeserializeObject<LogsResponse>(responseContent);
-
-            } else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400 Bad request
-                CustomContentDialog.ShowAsync("Erreur 400: Mauvaise requête", title: "Erreur", primary: "OK");
-                return null;
-            } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 401 Unauthorized
-                CustomContentDialog.ShowAsync("Erreur 403: Non authorisé", title: "Erreur", primary: "OK");
-                return null;
-            } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
-                CustomContentDialog.ShowAsync("Erreur 404: Non trouvé", title: "Erreur", primary: "OK");
-                return null;
-            } else {
+            } catch {
                 CustomContentDialog.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
                 return null;
             }
