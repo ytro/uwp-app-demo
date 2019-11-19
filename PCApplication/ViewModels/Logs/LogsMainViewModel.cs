@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using PCApplication.Commands;
+using PCApplication.JsonSchemas;
 
 namespace PCApplication.ViewModels {
     /// <summary>
@@ -82,7 +83,7 @@ namespace PCApplication.ViewModels {
         public async void FetchLogs(HostEnum host) {
             IsBusy = true;
 
-            LogsSchema.RootObject response = await RestService.GetLogs(host, _lastReceived);
+            LogsResponse response = await RestService.GetLogs(host, _lastReceived);
 
             if (response != null) {
                 _lastReceived = LogContext.Instance.Update(response, host);

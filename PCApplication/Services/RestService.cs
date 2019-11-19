@@ -2,6 +2,7 @@
 using Newtonsoft.Json.Linq;
 using NJsonSchema;
 using PCApplication.Configuration;
+using PCApplication.JsonSchemas;
 using PCApplication.UserControls;
 using System.Diagnostics;
 using System.Net.Http;
@@ -17,13 +18,15 @@ namespace PCApplication.Services {
     public class RestService : IRestService {
         // Singleton HttpClient
         private HttpClient _client = new HttpClient();
+        private string _token = "";
 
         public RestService() { }
 
         public async Task<bool> Login(string username, string password) {
-            string requestUri = ConfigManager.GetBaseServerUri() + "/admin/login";
+            string requestUri = ConfigManager.GetBaseServerUri() + "/usager/login";
             try {
-                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, $"https://httpbin.org/post");
+                //HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, $"https://httpbin.org/post");
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, requestUri);
 
                 string json = new JObject
                 {
@@ -36,12 +39,28 @@ namespace PCApplication.Services {
                 HttpResponseMessage response = await _client.SendAsync(request);
 
                 if (response.IsSuccessStatusCode) { // Represents a code from 200 to 299
+                    string responseContent = await response.Content.ReadAsStringAsync();
+
+                    // Check JSON reponse against schema
+                    JsonSchema schema = JsonSchema.FromType<TokenResponse>();
+                    var errors = schema.Validate(responseContent);
+                    if (errors.Count > 0)
+                    {
+                        return false;
+                    }
+
+                    // Return deserialized JSON object
+                    TokenResponse token = JsonConvert.DeserializeObject<TokenResponse>(responseContent);
+                    this._token = token.AccessToken;
                     return true;
                 } else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400
                     CustomContentDialog.ShowAsync("Erreur 400:\n" + response.ToString(), title: "Erreur", primary: "OK");
                     return false;
                 } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 403
                     CustomContentDialog.ShowAsync("Erreur 403:\n" + response.ToString(), title: "Erreur", primary: "OK");
+                    return false;
+                } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
+                    CustomContentDialog.ShowAsync("Erreur 404: Non trouvé", title: "Erreur", primary: "OK");
                     return false;
                 } else {
                     CustomContentDialog.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
@@ -112,7 +131,7 @@ namespace PCApplication.Services {
         }
 
 
-        public async Task<LogsSchema.RootObject> GetLogs(HostEnum source, int lastReceived) {
+        public async Task<LogsResponse> GetLogs(HostEnum source, int lastReceived) {
             string requestUri = ConfigManager.GetBaseServerUri() + "/admin/logs";
 
             switch (source) {
@@ -124,10 +143,10 @@ namespace PCApplication.Services {
 
             // Prepare request
             string json = new JObject {
-                { "dernier_blocs", lastReceived }
+                { "dernier", lastReceived }
             }.ToString();
 
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, requestUri);
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, requestUri);
             request.Content = new StringContent(json, Encoding.UTF8, "application/json");
 
             // Send request
@@ -138,7 +157,7 @@ namespace PCApplication.Services {
                 string responseContent = await response.Content.ReadAsStringAsync();
 
                 // Check JSON reponse against schema
-                JsonSchema schema = JsonSchema.FromType<LogsSchema.RootObject>();
+                JsonSchema schema = JsonSchema.FromType<LogsResponse>();
                 var errors = schema.Validate(responseContent);
                 if (errors.Count > 0) {
                     // Debug.WriteLine(error.Path + ": " + error.Kind);
@@ -149,13 +168,16 @@ namespace PCApplication.Services {
                 // responseContent = StringResources.GetString("mockValidLogsJson");
 
                 // Return deserialized JSON object
-                return JsonConvert.DeserializeObject<LogsSchema.RootObject>(responseContent);
+                return JsonConvert.DeserializeObject<LogsResponse>(responseContent);
 
             } else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400 Bad request
                 CustomContentDialog.ShowAsync("Erreur 400: Mauvaise requête", title: "Erreur", primary: "OK");
                 return null;
             } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 401 Unauthorized
                 CustomContentDialog.ShowAsync("Erreur 403: Non authorisé", title: "Erreur", primary: "OK");
+                return null;
+            } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
+                CustomContentDialog.ShowAsync("Erreur 404: Non trouvé", title: "Erreur", primary: "OK");
                 return null;
             } else {
                 CustomContentDialog.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
@@ -175,6 +197,6 @@ namespace PCApplication.Services {
 
         // Requêtes GET
         Task<object> GetBlockchain(HostEnum source);                                // GET /admin/chaine/[1-3]
-        Task<LogsSchema.RootObject> GetLogs(HostEnum source, int lastReceived);     // GET /admin/logs/[1-3] et GET /admin/logs/serveurweb
+        Task<LogsResponse> GetLogs(HostEnum source, int lastReceived);     // GET /admin/logs/[1-3] et GET /admin/logs/serveurweb
     }
 }

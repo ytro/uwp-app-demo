@@ -125,10 +125,10 @@
     <Compile Include="Converters\BooleanConverters\BooleanConverterBase.cs" />
     <Compile Include="Converters\BooleanConverters\BooleanToBrushConverter.cs" />
     <Compile Include="Converters\BooleanConverters\BooleanToVisibilityConverter.cs" />
-    <Compile Include="Converters\HostEnumToStringConverter.cs" />
     <Compile Include="Converters\BooleanConverters\InvertedBooleanConverter.cs" />
     <Compile Include="Enum\HostEnum.cs" />
-    <Compile Include="JsonSchemas\LogsSchema.cs" />
+    <Compile Include="JsonSchemas\LogsResponse.cs" />
+    <Compile Include="JsonSchemas\TokenResponse.cs" />
     <Compile Include="Model\Block.cs" />
     <Compile Include="Model\Blockchain.cs" />
     <Compile Include="Model\LogContext.cs" />
@@ -243,6 +243,13 @@
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
