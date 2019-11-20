@@ -23,6 +23,9 @@
             </CommandBar.Content>
             <AppBarButton x:Name="buttonNew" Icon="Add" Label="Ajouter compte" LabelPosition="Default" HorizontalAlignment="Left" Command="{Binding AddAccountCommand}" />
             <AppBarButton x:Name="buttonDelete" Icon="Delete" Label="Supprimer compte" LabelPosition="Default" HorizontalAlignment="Left" Command="{Binding DeleteAccountCommand}" />
+            <AppBarSeparator/>
+            <AppBarButton Icon="Refresh" Command="{Binding RefreshAccountsCommand}" Label="Actualiser les comptes" LabelPosition="Default" />
+
         </CommandBar>
         <ListView Grid.Row="1" 
                   ItemsSource="{Binding Path=accounts}"
@@ -35,7 +38,7 @@
                             <ColumnDefinition Width="360"/>
                         </Grid.ColumnDefinitions>
                         <TextBlock Text="Nom d'usager" Style="{ThemeResource CaptionTextBlockStyle}"/>
-                        <TextBlock Grid.Column="1" Text="Mode Edition" Style="{ThemeResource CaptionTextBlockStyle}"/>
+                        <TextBlock Grid.Column="1" Text="Mode édition" Style="{ThemeResource CaptionTextBlockStyle}"/>
                     </Grid>
                 </DataTemplate>
             </ListView.HeaderTemplate>

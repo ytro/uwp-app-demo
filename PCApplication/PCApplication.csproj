@@ -129,6 +129,7 @@
     <Compile Include="Enum\HostEnum.cs" />
     <Compile Include="JsonSchemas\LogsResponse.cs" />
     <Compile Include="JsonSchemas\TokenResponse.cs" />
+    <Compile Include="JsonSchemas\UsersResponse.cs" />
     <Compile Include="Model\Block.cs" />
     <Compile Include="Model\Blockchain.cs" />
     <Compile Include="Model\LogContext.cs" />

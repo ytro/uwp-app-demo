@@ -1,5 +1,6 @@
 ﻿using PCApplication.Commands;
 using PCApplication.Common;
+using PCApplication.JsonSchemas;
 using PCApplication.Services;
 using PCApplication.UserControls;
 using PCApplication.Views;
@@ -21,9 +22,9 @@ namespace PCApplication.ViewModels {
             NavigationService = navigationService;
             AddAccountCommand = new RelayCommand(AddAccountCommandExecute, AddAccountCommandCanExecute);
             DeleteAccountCommand = new RelayCommand(DeleteAccountCommandExecute, DeleteAccountCommandCanExecute);
+            RefreshAccountsCommand = new RelayCommand(RefreshAccountsCommandExecute, RefreshAccountsCommandCanExecute);
             accounts = new ObservableCollection<Account>();
         }
-
 
         public IRestService RestService { get; }
         public INavigationService NavigationService { get; }
@@ -37,7 +38,31 @@ namespace PCApplication.ViewModels {
             }
         }
 
+        private bool _isBusy = false;
+        public bool IsBusy {
+            get => _isBusy;
+            set {
+                _isBusy = value;
+                RaisePropertyChanged();
+                AddAccountCommand.RaiseCanExecuteChanged();
+                DeleteAccountCommand.RaiseCanExecuteChanged();
+                RefreshAccountsCommand.RaiseCanExecuteChanged();
+            }
+        }
+
+        private Account _selectedAccount;
+        public Account SelectedAccount {
+            get => _selectedAccount;
+            set {
+                _selectedAccount = value;
+                DeleteAccountCommand.RaiseCanExecuteChanged();
+            }
+        }
+
         public RelayCommand AddAccountCommand { get; }
+        public bool AddAccountCommandCanExecute() {
+            return !IsBusy;
+        }
         public async void AddAccountCommandExecute() {
             var vm = ServiceLocator.Instance.GetService<AddAccountViewModel>();
             var addAccountDialog = new AddAccountContentDialog(vm);
@@ -52,35 +77,16 @@ namespace PCApplication.ViewModels {
 
                 IsBusy = false;
             }
-            
-        }
-        public bool AddAccountCommandCanExecute() {
-            return !IsBusy;
-        }
 
-        private bool _isBusy = false;
-        public bool IsBusy {
-            get => _isBusy;
-            set {
-                _isBusy = value;
-                RaisePropertyChanged();
-                AddAccountCommand.RaiseCanExecuteChanged();
-                DeleteAccountCommand.RaiseCanExecuteChanged();
-            }
-        }
-
-        private Account _selectedAccount;
-        public Account SelectedAccount {
-            get => _selectedAccount;
-            set {
-                _selectedAccount = value;
-                DeleteAccountCommand.RaiseCanExecuteChanged();
-            }
         }
 
         public RelayCommand DeleteAccountCommand { get;  }
+        public bool DeleteAccountCommandCanExecute() {
+            return SelectedAccount != null && !IsBusy;
+        }
         public async void DeleteAccountCommandExecute() {
-            bool result = await CustomContentDialog.ShowAsync($"Supprimer le compte usager {SelectedAccount.Username}?", title: "Confirmation", primary: "Oui", secondary: "Annuler");
+            bool result = await CustomContentDialog.ShowAsync($"Supprimer le compte usager {SelectedAccount.Username}?", 
+                title: "Confirmation", primary: "Oui", secondary: "Annuler");
             if (result) {
                 IsBusy = true;
 
@@ -93,10 +99,25 @@ namespace PCApplication.ViewModels {
             }
         }
 
-        public bool DeleteAccountCommandCanExecute() {
-            return SelectedAccount != null && !IsBusy;
-        }
 
+        public RelayCommand RefreshAccountsCommand { get; }
+        public bool RefreshAccountsCommandCanExecute() {
+            return !IsBusy;
+        }
+        public async void RefreshAccountsCommandExecute() {
+            IsBusy = true;
+
+            UsersResponse response = await RestService.GetUsers();
+            if (response != null) {
+                accounts.Clear();
+                foreach (JsonSchemas.User user in response.Users) {
+                    accounts.Add(new Account(user.Username, user.IsEditor));
+                }
+            }
+
+            IsBusy = false;
+            
+        }
     }
 
     public class Account : ViewModelBase {

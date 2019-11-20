@@ -28,9 +28,5 @@ namespace PCApplication.Views {
             //Set the DataContext
             DataContext = ServiceLocator.Instance.GetService<AccountsMainViewModel>();
         }
-
-        private void ButtonNew_Click(object sender, RoutedEventArgs e) {
-          //  ViewModel.AddCompte();
-        }
     }
 }

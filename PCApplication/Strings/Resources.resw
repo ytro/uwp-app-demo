@@ -249,4 +249,18 @@
 }</value>
     <comment>{\"information\": [{\"no\": 1,\"severite\": \"severite1\", \"heure\": \"heure1\",\"message\": \"message1\"},{\"no\": 2,\"severite\": \"severite2\", \"heure\": \"heure2\",\"message\": \"message2\"},{\"no\": 3,\"severite\": \"severite3\", \"heure\": \"heure3\",\"message\": \"message3\"},{\"no\": 4,\"severite\": \"severite4\", \"heure\": \"heure4\",\"message\": \"message4\"},{\"no\": 5,\"severite\": \"severite5\", \"heure\": \"heure5\",\"message\": \"message5\"},{\"no\": 6,\"severite\": \"severite6\", \"heure\": \"heure6\",\"message\": \"message6\"},{\"no\": 7,\"severite\": \"severite7\", \"heure\": \"heure7\",\"message\": \"message7\"},{\"no\": 8,\"severite\": \"severite8\", \"heure\": \"heure8\",\"message\": \"message8\"},{\"no\": 9,\"severite\": \"severite9\", \"heure\": \"heure9\",\"message\": \"message9\"},{\"no\": 10,\"severite\": \"severite10\", \"heure\": \"heure10\",\"message\": \"message10\"}]}</comment>
   </data>
+  <data name="mockValidUsersJson" xml:space="preserve">
+    <value>{
+	"comptes" : [
+		{
+			"usager" : "nomdelusager1",
+			"edition": true
+		},
+		{
+			"usager" : "nomdelusager2",
+			"edition": false
+		}
+	]
+}</value>
+  </data>
 </root>

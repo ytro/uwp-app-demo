@@ -75,7 +75,7 @@ namespace PCApplication.Services {
         public async Task<bool> Logout() {
             string requestUri = ConfigManager.GetBaseServerUri() + "/admin/logout";
             try {
-                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, $"https://httpbin.org/post");
+                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, requestUri);
                 HttpResponseMessage response = await _client.SendAsync(request);
                 if (response.IsSuccessStatusCode) {
                     return true;
@@ -87,13 +87,39 @@ namespace PCApplication.Services {
         public async Task<bool> ChangePassword(string oldPassword, string newPassword) {
             string requestUri = ConfigManager.GetBaseServerUri() + "/admin/motdepasse";
 
+            // Prepare request
             string json = new JObject
             {
                 { "ancien", oldPassword },
                 { "nouveau", newPassword }
             }.ToString();
 
-            throw new System.NotImplementedException();
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, requestUri);
+            request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            // Send request
+            try {
+                HttpResponseMessage response = await _client.SendAsync(request);
+
+                if (response.IsSuccessStatusCode) { // 200-299
+                    return true;
+                } else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400 Bad request
+                    CustomContentDialog.ShowAsync("Erreur 400: Mauvaise requête", title: "Erreur", primary: "OK");
+                    return false;
+                } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 401 Unauthorized
+                    CustomContentDialog.ShowAsync("Erreur 403: Non authorisé", title: "Erreur", primary: "OK");
+                    return false;
+                } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
+                    CustomContentDialog.ShowAsync("Erreur 404: Non trouvé", title: "Erreur", primary: "OK");
+                    return false;
+                } else {
+                    CustomContentDialog.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
+                    return false;
+                }
+            } catch {
+                CustomContentDialog.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
+                return false;
+            }
         }
 
         public async Task<bool> CreateAccount(string username, string password, bool isEditor) {
@@ -141,12 +167,38 @@ namespace PCApplication.Services {
         public async Task<bool> DeleteAccount(string username) {
             string requestUri = ConfigManager.GetBaseServerUri() + "/admin/suppressioncompte";
 
+            // Prepare request
             string json = new JObject
             {
                 { "usager", username }
             }.ToString();
 
-            throw new System.NotImplementedException();
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, requestUri);
+            request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            // Send request
+            try {
+                HttpResponseMessage response = await _client.SendAsync(request);
+
+                if (response.IsSuccessStatusCode) { // 200-299
+                    return true;
+                } else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400 Bad request
+                    CustomContentDialog.ShowAsync("Erreur 400: Mauvaise requête", title: "Erreur", primary: "OK");
+                    return false;
+                } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 401 Unauthorized
+                    CustomContentDialog.ShowAsync("Erreur 403: Non authorisé", title: "Erreur", primary: "OK");
+                    return false;
+                } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
+                    CustomContentDialog.ShowAsync("Erreur 404: Non trouvé", title: "Erreur", primary: "OK");
+                    return false;
+                } else {
+                    CustomContentDialog.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
+                    return false;
+                }
+            } catch {
+                CustomContentDialog.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
+                return false;
+            }
         }
 
         public async Task<object> GetBlockchain(HostEnum source) {
@@ -191,7 +243,7 @@ namespace PCApplication.Services {
                     JsonSchema schema = JsonSchema.FromType<LogsResponse>();
                     var errors = schema.Validate(responseContent);
                     if (errors.Count > 0) {
-                        // Debug.WriteLine(error.Path + ": " + error.Kind);
+                        CustomContentDialog.ShowAsync("Erreur: Mauvaise malformée du serveur", title: "Erreur", primary: "OK");
                         return null;
                     }
 
@@ -220,18 +272,77 @@ namespace PCApplication.Services {
             }
         }
 
+        public async Task<UsersResponse> GetUsers() {
+
+            // Mocked response
+            string responseContent = StringResources.GetString("mockValidUsersJson");
+            // Check JSON reponse against schema
+            JsonSchema schema = JsonSchema.FromType<UsersResponse>();
+            var errors = schema.Validate(responseContent);
+            if (errors.Count > 0) {
+                // Debug.WriteLine(error.Path + ": " + error.Kind);
+                return null;
+            }
+            // Return deserialized JSON object
+            return JsonConvert.DeserializeObject<UsersResponse>(responseContent);
+            /*
+            string requestUri = ConfigManager.GetBaseServerUri() + "/users";
+
+            // Prepare request
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, requestUri);
+
+            // Send request
+            try {
+                HttpResponseMessage response = await _client.SendAsync(request);
+
+                if (response.IsSuccessStatusCode) { // 200-299
+                    // Get response
+                    string responseContent = await response.Content.ReadAsStringAsync();
+
+                    // Check JSON reponse against schema
+                    JsonSchema schema = JsonSchema.FromType<UsersResponse>();
+                    var errors = schema.Validate(responseContent);
+                    if (errors.Count > 0) {
+                        CustomContentDialog.ShowAsync("Erreur: Mauvaise malformée du serveur", title: "Erreur", primary: "OK");
+                        return null;
+                    }
+
+                    // Return deserialized JSON object
+                    return JsonConvert.DeserializeObject<UsersResponse>(responseContent);
+
+                } else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400 Bad request
+                    CustomContentDialog.ShowAsync("Erreur 400: Mauvaise requête", title: "Erreur", primary: "OK");
+                    return null;
+                } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 401 Unauthorized
+                    CustomContentDialog.ShowAsync("Erreur 403: Non authorisé", title: "Erreur", primary: "OK");
+                    return null;
+                } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
+                    CustomContentDialog.ShowAsync("Erreur 404: Non trouvé", title: "Erreur", primary: "OK");
+                    return null;
+                } else {
+                    CustomContentDialog.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
+                    return null;
+                }
+            } catch {
+                CustomContentDialog.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
+                return null;
+            }*/
+        }
     }
 
     public interface IRestService {
-        // Requêtes POST
+        // Requêtes POST requises
         Task<bool> Login(string username, string password);                         // POST /admin/login
         Task<bool> Logout();                                                        // POST /admin/logout
         Task<bool> ChangePassword(string oldPassword, string newPassword);          // POST /admin/motdepasse
         Task<bool> CreateAccount(string username, string password, bool isEditor);  // POST /admin/creationcompte
         Task<bool> DeleteAccount(string username);                                  // POST /admin/suppressioncompte
 
-        // Requêtes GET
+        // Requêtes GET requises
         Task<object> GetBlockchain(HostEnum source);                                // GET /admin/chaine/[1-3]
-        Task<LogsResponse> GetLogs(HostEnum source, int lastReceived);     // GET /admin/logs/[1-3] et GET /admin/logs/serveurweb
+        Task<LogsResponse> GetLogs(HostEnum source, int lastReceived);              // GET /admin/logs/[1-3] et GET /admin/logs/serveurweb
+
+        // Requêtes GET optionnelles
+        Task<UsersResponse> GetUsers();                                             // GET /users...?
     }
 }
