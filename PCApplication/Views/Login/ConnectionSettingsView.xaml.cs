@@ -14,12 +14,10 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 
-namespace PCApplication.Views {
-    public sealed partial class BlockchainMainView : Page {
-        public BlockchainMainView() {
+namespace PCApplication.Views.Login {
+    public sealed partial class ConnectionSettingsView : Page {
+        public ConnectionSettingsView() {
             this.InitializeComponent();
-
-            NavigationCacheMode = NavigationCacheMode.Required;
         }
     }
 }

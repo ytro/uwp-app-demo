@@ -19,7 +19,6 @@ namespace PCApplication.ViewModels {
 
         public LogsMainViewModel(IRestService restService) {
             RestService = restService;
-           // FetchLogsCommand = new RelayCommand(FetchLogsCommandExecute, FetchLogsCommandCanExecute);
         }
 
         IRestService RestService { get; }
@@ -55,30 +54,8 @@ namespace PCApplication.ViewModels {
             set {
                 _isBusy = value;
                 RaisePropertyChanged();
-               // FetchLogsCommand.RaiseCanExecuteChanged();
             }
         }
-
-        /*   public RelayCommand FetchLogsCommand { get; }
-           private bool FetchLogsCommandCanExecute() {
-               return !IsBusy;
-           }*/
-
-        /*   private async void FetchLogsCommandExecute() {
-               IsBusy = true;
-
-               LogsSchema.RootObject response = await RestService.GetLogs(_selectedSource, _lastReceived);
-
-               if (response != null) {
-                   // Add reponse items for the sake of testing
-                   for (int i = 0; i < 500; i++)
-                       LogContext.Instance.Update(response, _selectedSource);
-
-                   DisplayText = LogContext.Instance.GetLogsText(_selectedSource);
-               }
-
-               IsBusy = false;
-           }*/
 
         public async void FetchLogs(HostEnum host) {
             IsBusy = true;

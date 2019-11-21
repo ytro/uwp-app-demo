@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace PCApplication.Models
 {
-    /// <summary>
-    /// The model for a block contained within the blockchain
-    /// </summary>
-    class Block
+
+    class Blockchain
     {
     }
 }

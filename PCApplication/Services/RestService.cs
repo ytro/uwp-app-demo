@@ -15,6 +15,8 @@ namespace PCApplication.Services {
     /// This class contains all Rest API calls and manages communication errors.
     /// However, it doesn't handle the response, which is returned to the caller.
     /// </summary>
+    /// 
+
     public class RestService : IRestService {
         // Singleton HttpClient
         private HttpClient _client = new HttpClient();
@@ -26,7 +28,6 @@ namespace PCApplication.Services {
             return true;
             string requestUri = ConfigManager.GetBaseServerUri() + "/usager/login";
             try {
-                //HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, $"https://httpbin.org/post");
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, requestUri);
 
                 string json = new JObject
@@ -55,16 +56,16 @@ namespace PCApplication.Services {
                     this._token = token.AccessToken;
                     return true;
                 } else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400
-                    CustomContentDialog.ShowAsync("Erreur 400:\n" + response.ToString(), title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Erreur 400:\n" + response.ToString(), title: "Erreur", primary: "OK");
                     return false;
                 } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 403
-                    CustomContentDialog.ShowAsync("Erreur 403:\n" + response.ToString(), title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Erreur 403:\n" + response.ToString(), title: "Erreur", primary: "OK");
                     return false;
                 } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
-                    CustomContentDialog.ShowAsync("Erreur 404: Non trouvé", title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Erreur 404: Non trouvé", title: "Erreur", primary: "OK");
                     return false;
                 } else {
-                    CustomContentDialog.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
                     return false;
                 }
             } catch { }
@@ -104,20 +105,20 @@ namespace PCApplication.Services {
                 if (response.IsSuccessStatusCode) { // 200-299
                     return true;
                 } else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400 Bad request
-                    CustomContentDialog.ShowAsync("Erreur 400: Mauvaise requête", title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Erreur 400: Mauvaise requête", title: "Erreur", primary: "OK");
                     return false;
                 } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 401 Unauthorized
-                    CustomContentDialog.ShowAsync("Erreur 403: Non authorisé", title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Erreur 403: Non authorisé", title: "Erreur", primary: "OK");
                     return false;
                 } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
-                    CustomContentDialog.ShowAsync("Erreur 404: Non trouvé", title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Erreur 404: Non trouvé", title: "Erreur", primary: "OK");
                     return false;
                 } else {
-                    CustomContentDialog.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
                     return false;
                 }
             } catch {
-                CustomContentDialog.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
+                _ = DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
                 return false;
             }
         }
@@ -143,23 +144,23 @@ namespace PCApplication.Services {
                 if (response.IsSuccessStatusCode) { // 200-299
                     return true;
                 } else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400 Bad request
-                    CustomContentDialog.ShowAsync("Erreur 400: Mauvaise requête", title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Erreur 400: Mauvaise requête", title: "Erreur", primary: "OK");
                     return false;
                 } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 401 Unauthorized
-                    CustomContentDialog.ShowAsync("Erreur 403: Non authorisé", title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Erreur 403: Non authorisé", title: "Erreur", primary: "OK");
                     return false;
                 } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
-                    CustomContentDialog.ShowAsync("Erreur 404: Non trouvé", title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Erreur 404: Non trouvé", title: "Erreur", primary: "OK");
                     return false;
                 } else if (response.StatusCode == System.Net.HttpStatusCode.Conflict) { // 409
-                    CustomContentDialog.ShowAsync("Erreur 409: Un compte portant le même nom existe déjà", title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Erreur 409: Un compte portant le même nom existe déjà", title: "Erreur", primary: "OK");
                     return false;
                 } else {
-                    CustomContentDialog.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
                     return false;
                 }
             } catch {
-                CustomContentDialog.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
+                _ = DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
                 return false;
             }
         }
@@ -183,20 +184,20 @@ namespace PCApplication.Services {
                 if (response.IsSuccessStatusCode) { // 200-299
                     return true;
                 } else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400 Bad request
-                    CustomContentDialog.ShowAsync("Erreur 400: Mauvaise requête", title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Erreur 400: Mauvaise requête", title: "Erreur", primary: "OK");
                     return false;
                 } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 401 Unauthorized
-                    CustomContentDialog.ShowAsync("Erreur 403: Non authorisé", title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Erreur 403: Non authorisé", title: "Erreur", primary: "OK");
                     return false;
                 } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
-                    CustomContentDialog.ShowAsync("Erreur 404: Non trouvé", title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Erreur 404: Non trouvé", title: "Erreur", primary: "OK");
                     return false;
                 } else {
-                    CustomContentDialog.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
                     return false;
                 }
             } catch {
-                CustomContentDialog.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
+                _ = DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
                 return false;
             }
         }
@@ -243,7 +244,7 @@ namespace PCApplication.Services {
                     JsonSchema schema = JsonSchema.FromType<LogsResponse>();
                     var errors = schema.Validate(responseContent);
                     if (errors.Count > 0) {
-                        CustomContentDialog.ShowAsync("Erreur: Mauvaise malformée du serveur", title: "Erreur", primary: "OK");
+                        _ = DialogService.ShowAsync("Erreur: Réponse malformée du serveur", title: "Erreur", primary: "OK");
                         return null;
                     }
 
@@ -254,20 +255,20 @@ namespace PCApplication.Services {
                     return JsonConvert.DeserializeObject<LogsResponse>(responseContent);
 
                 } else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400 Bad request
-                    CustomContentDialog.ShowAsync("Erreur 400: Mauvaise requête", title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Erreur 400: Mauvaise requête", title: "Erreur", primary: "OK");
                     return null;
                 } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 401 Unauthorized
-                    CustomContentDialog.ShowAsync("Erreur 403: Non authorisé", title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Erreur 403: Non authorisé", title: "Erreur", primary: "OK");
                     return null;
                 } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
-                    CustomContentDialog.ShowAsync("Erreur 404: Non trouvé", title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Erreur 404: Non trouvé", title: "Erreur", primary: "OK");
                     return null;
                 } else {
-                    CustomContentDialog.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
                     return null;
                 }
             } catch {
-                CustomContentDialog.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
+                _ = DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
                 return null;
             }
         }
@@ -303,7 +304,7 @@ namespace PCApplication.Services {
                     JsonSchema schema = JsonSchema.FromType<UsersResponse>();
                     var errors = schema.Validate(responseContent);
                     if (errors.Count > 0) {
-                        CustomContentDialog.ShowAsync("Erreur: Mauvaise malformée du serveur", title: "Erreur", primary: "OK");
+                        DialogService.ShowAsync("Erreur: Mauvaise malformée du serveur", title: "Erreur", primary: "OK");
                         return null;
                     }
 
@@ -311,20 +312,20 @@ namespace PCApplication.Services {
                     return JsonConvert.DeserializeObject<UsersResponse>(responseContent);
 
                 } else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400 Bad request
-                    CustomContentDialog.ShowAsync("Erreur 400: Mauvaise requête", title: "Erreur", primary: "OK");
+                    DialogService.ShowAsync("Erreur 400: Mauvaise requête", title: "Erreur", primary: "OK");
                     return null;
                 } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 401 Unauthorized
-                    CustomContentDialog.ShowAsync("Erreur 403: Non authorisé", title: "Erreur", primary: "OK");
+                    DialogService.ShowAsync("Erreur 403: Non authorisé", title: "Erreur", primary: "OK");
                     return null;
                 } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
-                    CustomContentDialog.ShowAsync("Erreur 404: Non trouvé", title: "Erreur", primary: "OK");
+                    DialogService.ShowAsync("Erreur 404: Non trouvé", title: "Erreur", primary: "OK");
                     return null;
                 } else {
-                    CustomContentDialog.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
+                    DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
                     return null;
                 }
             } catch {
-                CustomContentDialog.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
+                DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
                 return null;
             }*/
         }

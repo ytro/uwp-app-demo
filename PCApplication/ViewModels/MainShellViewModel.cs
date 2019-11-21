@@ -29,8 +29,10 @@ namespace PCApplication.ViewModels {
         public NavigationItemViewModel SelectedItem {
             get => _selectedItem;
             set {
-                _selectedItem = value;
-                RaisePropertyChanged();
+                if (value != null) {
+                    _selectedItem = value;
+                    RaisePropertyChanged();
+                }
             }
         }
 
@@ -51,20 +53,9 @@ namespace PCApplication.ViewModels {
         public void NavigationSelectionChangedCommand(NavigationItemViewModel SelectedItem) {
             NavigationService.Navigate(SelectedItem.View, infoOverride: new DrillInNavigationTransitionInfo());
         }
-
-        public async void Logout() {
-            bool logoutConfirmed = await CustomContentDialog.ShowAsync("Se déconnecter?", "Confirmation", "Oui", "Non");
-            if (logoutConfirmed) {
-                // Send logout REST request
-                //var response = await RestService.Logout();
-
-                // Cleanup the models
-                LogContext.Cleanup();
-
-                // Reset the Navigation frame to the window frame
-                NavigationService.Initialize(Window.Current.Content as Frame);
-                NavigationService.Navigate<LoginView>();
-            }
+        
+        public void ViewSettings() {
+            NavigationService.Navigate(typeof(AdminSettingsView), infoOverride: new DrillInNavigationTransitionInfo());
         }
     }
 

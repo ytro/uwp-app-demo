@@ -28,7 +28,7 @@
 
         </CommandBar>
         <ListView Grid.Row="1" 
-                  ItemsSource="{Binding Path=accounts}"
+                  ItemsSource="{Binding Path=DisplayedAccounts}"
                   SelectedItem="{Binding SelectedAccount, Mode=TwoWay}">
             <ListView.HeaderTemplate>
                 <DataTemplate>
@@ -43,7 +43,7 @@
                 </DataTemplate>
             </ListView.HeaderTemplate>
             <ListView.ItemTemplate>
-                <DataTemplate x:Name="compteDataTemplate" x:DataType="vm:Account">
+                <DataTemplate x:Name="compteDataTemplate" x:DataType="vm:AccountViewModel">
                     <Grid Height="48">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="360"/>

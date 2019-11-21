@@ -126,19 +126,25 @@
     <Compile Include="Converters\BooleanConverters\BooleanToBrushConverter.cs" />
     <Compile Include="Converters\BooleanConverters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\BooleanConverters\InvertedBooleanConverter.cs" />
+    <Compile Include="Converters\NavigationViewItemConverter.cs" />
     <Compile Include="Enum\HostEnum.cs" />
     <Compile Include="JsonSchemas\LogsResponse.cs" />
     <Compile Include="JsonSchemas\TokenResponse.cs" />
     <Compile Include="JsonSchemas\UsersResponse.cs" />
-    <Compile Include="Model\Block.cs" />
-    <Compile Include="Model\Blockchain.cs" />
-    <Compile Include="Model\LogContext.cs" />
-    <Compile Include="Model\LogEntry.cs" />
+    <Compile Include="Models\Account.cs" />
+    <Compile Include="Models\AccountContext.cs" />
+    <Compile Include="Models\Block.cs" />
+    <Compile Include="Models\Blockchain.cs" />
+    <Compile Include="Models\LogContext.cs" />
+    <Compile Include="Models\LogEntry.cs" />
+    <Compile Include="Services\DialogService.cs" />
     <Compile Include="Services\NavigationService.cs" />
     <Compile Include="Services\RestService.cs" />
     <Compile Include="Strings\StringResources.cs" />
     <Compile Include="ViewModels\Accounts\AccountsMainViewModel.cs" />
+    <Compile Include="ViewModels\Accounts\AccountViewModel.cs" />
     <Compile Include="ViewModels\Accounts\AddAccountViewModel.cs" />
+    <Compile Include="ViewModels\AdminSettingsViewModel.cs" />
     <Compile Include="ViewModels\Blockchain\BlockchainMainViewModel.cs" />
     <Compile Include="ViewModels\Logs\LogsMainViewModel.cs" />
     <Compile Include="ViewModels\MainShellViewModel.cs" />
@@ -149,8 +155,14 @@
     <Compile Include="Views\Accounts\AddAccountContentDialog.xaml.cs">
       <DependentUpon>AddAccountContentDialog.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\AdminSettingsView.xaml.cs">
+      <DependentUpon>AdminSettingsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Blockchain\BlockchainMainView.xaml.cs">
       <DependentUpon>BlockchainMainView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Login\ConnectionSettingsView.xaml.cs">
+      <DependentUpon>ConnectionSettingsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Login\LoginView.xaml.cs">
       <DependentUpon>LoginView.xaml</DependentUpon>
@@ -159,8 +171,8 @@
       <DependentUpon>LogsMainView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UserControls\CustomContentDialog.xaml.cs">
-      <DependentUpon>CustomContentDialog.xaml</DependentUpon>
+    <Compile Include="UserControls\SimpleDialog.xaml.cs">
+      <DependentUpon>SimpleDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModels\Login\LoginViewModel.cs" />
     <Compile Include="Views\MainShellView.xaml.cs">
@@ -181,6 +193,19 @@
     <Content Include="Assets\SplashScreen.scale-150.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-400.png" />
+    <Content Include="Assets\Square44x44Logo.altform-unplated_targetsize-16.png" />
+    <Content Include="Assets\Square44x44Logo.altform-unplated_targetsize-256.png" />
+    <Content Include="Assets\Square44x44Logo.altform-unplated_targetsize-32.png" />
+    <Content Include="Assets\Square44x44Logo.altform-unplated_targetsize-48.png" />
+    <Content Include="Assets\Square44x44Logo.scale-100.png" />
+    <Content Include="Assets\Square44x44Logo.scale-125.png" />
+    <Content Include="Assets\Square44x44Logo.scale-150.png" />
+    <Content Include="Assets\Square44x44Logo.scale-400.png" />
+    <Content Include="Assets\Square44x44Logo.targetsize-16.png" />
+    <Content Include="Assets\Square44x44Logo.targetsize-24.png" />
+    <Content Include="Assets\Square44x44Logo.targetsize-256.png" />
+    <Content Include="Assets\Square44x44Logo.targetsize-32.png" />
+    <Content Include="Assets\Square44x44Logo.targetsize-48.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\Square150x150Logo.scale-200.png" />
@@ -202,7 +227,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\AdminSettingsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Blockchain\BlockchainMainView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Login\ConnectionSettingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -214,7 +247,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="UserControls\CustomContentDialog.xaml">
+    <Page Include="UserControls\SimpleDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

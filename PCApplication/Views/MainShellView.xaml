@@ -8,6 +8,7 @@
     xmlns:vm="using:PCApplication.ViewModels"
     xmlns:i="using:Microsoft.Xaml.Interactivity"
     xmlns:core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:converters="using:PCApplication.Converters"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Page.Resources>
@@ -25,6 +26,7 @@
                            VerticalAlignment="Center" />
             </Grid>
         </DataTemplate>
+        <converters:NavigationViewItemConverter x:Key="NavigationViewItemConverter"/>
     </Page.Resources>
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
@@ -36,7 +38,7 @@
                         PaneDisplayMode="Top"
                         MenuItemsSource="{Binding Path=NavigationItems}" 
                         MenuItemTemplate="{StaticResource NavigationViewItem}"
-                        SelectedItem="{Binding Path=SelectedItem, Mode=TwoWay}"
+                        SelectedItem="{Binding Path=SelectedItem, Mode=TwoWay, Converter={StaticResource NavigationViewItemConverter}}"
                         SelectionChanged="NavigationView_SelectionChanged"
                         ItemInvoked="NavigationView_ItemInvoked"
                         IsBackButtonVisible="Collapsed"
