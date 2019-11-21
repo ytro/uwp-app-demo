@@ -1,10 +1,126 @@
-﻿using System;
+﻿using PCApplication.Commands;
+using PCApplication.Common;
+using PCApplication.JsonSchemas;
+using PCApplication.Models;
+using PCApplication.Services;
+using PCApplication.UserControls;
+using PCApplication.Views;
+using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI.Xaml.Controls;
 
 namespace PCApplication.ViewModels {
-    class AccountsMainViewModel {
+
+    public class AccountsMainViewModel : ViewModelBase {
+
+        public AccountsMainViewModel(IRestService restService, INavigationService navigationService) {
+            RestService = restService;
+            NavigationService = navigationService;
+            AddAccountCommand = new RelayCommand(AddAccountCommandExecute, AddAccountCommandCanExecute);
+            DeleteAccountCommand = new RelayCommand(DeleteAccountCommandExecute, DeleteAccountCommandCanExecute);
+            RefreshAccountsCommand = new RelayCommand(RefreshAccountsCommandExecute, RefreshAccountsCommandCanExecute);
+            DisplayedAccounts = new ObservableCollection<AccountViewModel>();
+        }
+
+        public IRestService RestService { get; }
+        public INavigationService NavigationService { get; }
+
+        private ObservableCollection<AccountViewModel> _accounts;
+        public ObservableCollection<AccountViewModel> DisplayedAccounts {
+            get => _accounts;
+            set {
+                _accounts = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private bool _isBusy = false;
+        public bool IsBusy {
+            get => _isBusy;
+            set {
+                _isBusy = value;
+                RaisePropertyChanged();
+                AddAccountCommand.RaiseCanExecuteChanged();
+                DeleteAccountCommand.RaiseCanExecuteChanged();
+                RefreshAccountsCommand.RaiseCanExecuteChanged();
+            }
+        }
+
+        private AccountViewModel _selectedAccount;
+        public AccountViewModel SelectedAccount {
+            get => _selectedAccount;
+            set {
+                _selectedAccount = value;
+                DeleteAccountCommand.RaiseCanExecuteChanged();
+            }
+        }
+
+        public RelayCommand AddAccountCommand { get; }
+        public bool AddAccountCommandCanExecute() {
+            return !IsBusy;
+        }
+        public async void AddAccountCommandExecute() {
+            var vm = ServiceLocator.Instance.GetService<AddAccountViewModel>();
+            var addAccountDialog = new AddAccountContentDialog(vm);
+            bool result = await DialogService.ShowAsync(addAccountDialog);
+            if (result) {
+                IsBusy = true;
+
+                bool response = await RestService.CreateAccount(vm.Username, vm.Password, vm.IsEditor);
+
+                if (response)
+                    DisplayedAccounts.Add(new AccountViewModel(vm.Username, vm.IsEditor));
+
+                IsBusy = false;
+            }
+
+        }
+
+        public RelayCommand DeleteAccountCommand { get;  }
+        public bool DeleteAccountCommandCanExecute() {
+            return SelectedAccount != null && !IsBusy;
+        }
+        public async void DeleteAccountCommandExecute() {
+            bool result = await DialogService.ShowAsync($"Supprimer le compte usager {SelectedAccount.Username}?", 
+                title: "Confirmation", primary: "Oui", secondary: "Annuler");
+            if (result) {
+                IsBusy = true;
+
+                bool response = await RestService.DeleteAccount(SelectedAccount.Username);
+                if (response) {
+                    DisplayedAccounts.Remove(SelectedAccount);
+                }
+
+                IsBusy = false;
+            }
+        }
+
+
+        public RelayCommand RefreshAccountsCommand { get; }
+        public bool RefreshAccountsCommandCanExecute() {
+            return !IsBusy;
+        }
+        public async void RefreshAccountsCommandExecute() {
+            IsBusy = true;
+
+            UsersResponse response = await RestService.GetUsers();
+            if (response != null) {
+                DisplayedAccounts.Clear();
+
+                // Update the Accounts model
+                AccountContext.Instance.Update(response);
+
+                foreach (Account account in AccountContext.Instance.Accounts) {
+                    DisplayedAccounts.Add(new AccountViewModel(account.Username, account.Edition));
+                }
+            }
+
+            IsBusy = false;      
+        }
     }
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using PCApplication.Common;
+using PCApplication.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,13 +15,18 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-
 namespace PCApplication.Views {
-    public sealed partial class BlockchainMainView : Page {
-        public BlockchainMainView() {
+    public sealed partial class AddAccountContentDialog : ContentDialog {
+
+        AddAccountViewModel ViewModel => DataContext as AddAccountViewModel;
+
+
+        public AddAccountContentDialog(object dataContext) {
             this.InitializeComponent();
 
-            NavigationCacheMode = NavigationCacheMode.Required;
+            // Set the DataContext
+            DataContext = dataContext;
         }
+
     }
 }

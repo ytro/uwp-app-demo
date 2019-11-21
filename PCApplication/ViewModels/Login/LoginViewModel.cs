@@ -21,8 +21,6 @@ namespace PCApplication.ViewModels {
     /// </summary>
     public class LoginViewModel : ViewModelBase {
         private readonly string _username = "admin";
-        private string _password = "";
-        private bool _isBusy = false;
 
         public LoginViewModel(IRestService restService, INavigationService navigationService) {
             RestService = restService;
@@ -33,10 +31,8 @@ namespace PCApplication.ViewModels {
         public IRestService RestService { get; }
         public INavigationService NavigationService { get; }
 
-        public string Username {
-            get => _username;
-        }
 
+        private string _password = "";
         public string Password {
             get => _password;
             set {
@@ -45,6 +41,7 @@ namespace PCApplication.ViewModels {
             }
         }
 
+        private bool _isBusy = false;
         public bool IsBusy {
             get => _isBusy;
             set {
@@ -61,7 +58,7 @@ namespace PCApplication.ViewModels {
         }
         private async void LoginCommandExecute() {
             IsBusy = true;
-            bool loggedIn = await RestService.Login(Username, Password);
+            bool loggedIn = await RestService.Login(_username, _password);
             if (loggedIn) {
                 NavigationService.Navigate<MainShellView>();
             } else {

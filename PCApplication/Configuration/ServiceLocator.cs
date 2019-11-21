@@ -19,6 +19,8 @@ namespace PCApplication.Common {
             _serviceCollection.AddTransient<LogsMainViewModel>();
             _serviceCollection.AddTransient<AccountsMainViewModel>();
             _serviceCollection.AddTransient<BlockchainMainViewModel>();
+            _serviceCollection.AddTransient<AddAccountViewModel>();
+            _serviceCollection.AddTransient<AdminSettingsViewModel>();
 
             _serviceProvider = _serviceCollection.BuildServiceProvider();
         }
