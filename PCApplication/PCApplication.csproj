@@ -128,6 +128,8 @@
     <Compile Include="Converters\BooleanConverters\InvertedBooleanConverter.cs" />
     <Compile Include="Converters\NavigationViewItemConverter.cs" />
     <Compile Include="Enum\HostEnum.cs" />
+    <Compile Include="JsonSchemas\BlockchainResponse.cs" />
+    <Compile Include="JsonSchemas\BlockDataSchema.cs" />
     <Compile Include="JsonSchemas\LogsResponse.cs" />
     <Compile Include="JsonSchemas\TokenResponse.cs" />
     <Compile Include="JsonSchemas\UsersResponse.cs" />
@@ -143,6 +145,7 @@
     <Compile Include="Strings\StringResources.cs" />
     <Compile Include="ViewModels\Accounts\AccountsMainViewModel.cs" />
     <Compile Include="ViewModels\Accounts\AccountViewModel.cs" />
+    <Compile Include="ViewModels\Accounts\DeleteAccountViewModel.cs" />
     <Compile Include="ViewModels\Accounts\AddAccountViewModel.cs" />
     <Compile Include="ViewModels\AdminSettingsViewModel.cs" />
     <Compile Include="ViewModels\Blockchain\BlockchainMainViewModel.cs" />
@@ -151,6 +154,9 @@
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="Views\Accounts\AccountsMainView.xaml.cs">
       <DependentUpon>AccountsMainView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Accounts\DeleteAccountContentDialog.xaml.cs">
+      <DependentUpon>DeleteAccountContentDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Accounts\AddAccountContentDialog.xaml.cs">
       <DependentUpon>AddAccountContentDialog.xaml</DependentUpon>
@@ -222,6 +228,10 @@
     <Page Include="Views\Accounts\AccountsMainView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Accounts\DeleteAccountContentDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Accounts\AddAccountContentDialog.xaml">
       <SubType>Designer</SubType>

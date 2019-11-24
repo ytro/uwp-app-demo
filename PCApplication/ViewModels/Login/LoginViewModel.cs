@@ -58,7 +58,8 @@ namespace PCApplication.ViewModels {
         }
         private async void LoginCommandExecute() {
             IsBusy = true;
-            bool loggedIn = await RestService.Login(_username, _password);
+            //bool loggedIn = await RestService.Login(_username, _password);
+            bool loggedIn = true;
             if (loggedIn) {
                 NavigationService.Navigate<MainShellView>();
             } else {

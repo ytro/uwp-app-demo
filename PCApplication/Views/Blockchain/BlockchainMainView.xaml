@@ -5,10 +5,215 @@
     xmlns:local="using:PCApplication.Views.Blockchain"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:PCApplication.Models"
+    xmlns:converters="using:PCApplication.Converters"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid>
+    <Page.Resources>
+        <converters:InvertedBooleanConverter x:Key="InvertedBooleanConverter"/>
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <DataTemplate x:Name="BlockListViewTemplate" x:DataType="models:Block">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Ellipse x:Name="Ellipse"
+                         Grid.RowSpan="2"
+                         Width ="32"
+                         Height="32"
+                         Margin="6"
+                         VerticalAlignment="Center"
+                         HorizontalAlignment="Center"
+                         Fill="LightGray"/>
+                <TextBlock  Grid.Column="1"
+                            Grid.Row="1"
+                            Style="{ThemeResource BodyTextBlockStyle}"
+                            Margin="12,0,0,6">
+                    <Run Text="{Binding Data.Summary}"/>
+                </TextBlock>
+                <TextBlock Grid.Column="1"
+                           Style="{ThemeResource BaseTextBlockStyle}"
+                           Margin="12,6,0,0">
+                    <Run Text="Bloc (Index: " />
+                    <Run Text="{Binding Index}" />
+                    <Run Text=")" />
+                </TextBlock>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
 
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <CommandBar Grid.Row="0" Grid.ColumnSpan="2"
+            IsDynamicOverflowEnabled="False" 
+            HorizontalContentAlignment="Right" 
+            VerticalContentAlignment="Center" VerticalAlignment="Center" DefaultLabelPosition="Right" Background="Transparent">
+            <CommandBar.Content>
+                <ProgressRing IsActive="{Binding IsBusy}" />
+            </CommandBar.Content>
+
+            <AppBarButton Icon="Refresh" Click="Actualiser_Click" Label="Actualiser la chaîne de blocs" LabelPosition="Default" IsEnabled="{Binding IsBusy,Mode=OneWay, Converter={StaticResource InvertedBooleanConverter}}">
+                <AppBarButton.Flyout>
+                    <MenuFlyout x:Name="menuActualiser">
+                        <MenuFlyoutItem Text="Mineur 1" Click="MenuFlyoutItem1_Click" />
+                        <MenuFlyoutItem Text="Mineur 2" Click="MenuFlyoutItem2_Click" />
+                        <MenuFlyoutItem Text="Mineur 3" Click="MenuFlyoutItem3_Click" />
+                        <MenuFlyoutItem Text="Serveur web" Click="MenuFlyoutItem4_Click" />
+                    </MenuFlyout>
+                </AppBarButton.Flyout>
+            </AppBarButton>
+        </CommandBar>
+
+        <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+              Grid.Row="1"
+              Grid.ColumnSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition x:Name="MasterColumn" Width="200"  />
+                <ColumnDefinition x:Name="DetailColumn" Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <Border  Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
+                <TextBlock Text="Liste des blocs" Margin="24,8,8,8"
+                           Style="{ThemeResource TitleTextBlockStyle}" />
+            </Border>
+
+            <ListView x:Name="MasterListView" 
+                  ItemsSource="{Binding Blocks}"
+                  SelectedItem="{Binding CurrentBlock, Mode=TwoWay}"
+                  SelectionMode="Extended"
+                  IsItemClickEnabled="True"
+                  ShowsScrollingPlaceholders="False"
+                  ItemTemplate="{StaticResource BlockListViewTemplate}"
+                  Grid.Row="2">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
+
+            <ContentPresenter
+                x:Name="DetailContentPresenter"
+                Grid.Column="1"
+                Grid.RowSpan="2"
+                BorderThickness="1,0,0,0"
+                Visibility="{Binding IsBlockSelected, Converter={StaticResource BooleanToVisibilityConverter}}"
+                Padding="12,0"
+                BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                Content="{x:Bind MasterListView.SelectedItem, Mode=OneWay}">
+                <ContentPresenter.ContentTemplate>
+                    <DataTemplate x:DataType="models:Block">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <ScrollViewer>
+                                <StackPanel>
+                                    <TextBlock Style="{ThemeResource TitleTextBlockStyle}"    
+									       Text="Metadonnées"/>
+                                    <TextBlock  Style="{ThemeResource BodyTextBlockStyle}"
+									       >
+									    <Run FontWeight="Bold" Text="Index: "/>
+									    <Run Text="{Binding Index}"/>
+                                    </TextBlock>
+                                    <TextBlock  Style="{ThemeResource BodyTextBlockStyle}"
+									       >
+									    <Run FontWeight="Bold" Text="Hash: "/>
+									    <Run Text="{Binding Hash}"/>
+                                    </TextBlock>
+                                    <TextBlock  Style="{ThemeResource BodyTextBlockStyle}"
+									       >
+									    <Run FontWeight="Bold" Text="Hash précédent: "/>
+									    <Run Text="{Binding PreviousHash}"/>
+                                    </TextBlock>
+                                    <TextBlock  Style="{ThemeResource BodyTextBlockStyle}"
+									       >
+									    <Run FontWeight="Bold" Text="Nonce: "/>
+									    <Run Text="{Binding Nonce}"/>
+                                    </TextBlock>
+                                    <TextBlock  Style="{ThemeResource BodyTextBlockStyle}"
+									       >
+									    <Run FontWeight="Bold" Text="Date et heure: "/>
+									    <Run Text="{Binding Timestamp}"/>
+                                    </TextBlock>
+                                </StackPanel>
+                            </ScrollViewer>
+                            <Border Grid.Row="1" Grid.ColumnSpan="2" BorderBrush="Silver" BorderThickness="0 1 0 1">
+                            </Border>
+                            <ScrollViewer Grid.Row="1">
+                                <StackPanel>
+                                    <TextBlock Style="{ThemeResource TitleTextBlockStyle}"    
+									       Text="Données"/>
+                                    <TextBlock  Style="{ThemeResource BodyTextBlockStyle}"
+									       >
+									    <Run FontWeight="Bold" Text="Nom du cours: "/>
+									    <Run Text="{Binding Data.Nom}"/>
+                                    </TextBlock>
+                                    <TextBlock  Style="{ThemeResource BodyTextBlockStyle}"
+									       >
+									    <Run FontWeight="Bold" Text="Sigle: "/>
+									    <Run Text="{Binding Data.Sigle}"/>
+                                    </TextBlock>
+                                    <TextBlock  Style="{ThemeResource BodyTextBlockStyle}"
+									       >
+									    <Run FontWeight="Bold" Text="Trimestre: "/>
+									    <Run Text="{Binding Data.Trimestre}"/>
+                                    </TextBlock>
+                                    <ListView
+									    ItemsSource="{Binding Path=Data.Resultats}">
+                                        <ListView.HeaderTemplate>
+                                            <DataTemplate>
+                                                <TextBlock FontWeight="Bold" Text="Liste des résultats" Style="{ThemeResource BodyTextBlockStyle}"/>
+                                            </DataTemplate>
+                                        </ListView.HeaderTemplate>
+                                        <ListView.ItemTemplate>
+                                            <DataTemplate x:Name="resultatDataTemplate" x:DataType="models:Block+BlockData+Resultat" >
+                                                <StackPanel Height="Auto">
+                                                    <TextBlock Style="{ThemeResource BaseTextBlockStyle}">
+													    <Run Text="{Binding Prenom}"/>
+													    <Run Text=" "/>
+													    <Run Text="{Binding Nom}" />
+                                                    </TextBlock>
+                                                    <TextBlock Style="{ThemeResource BodyTextBlockStyle}" >
+													    <Run Text="Matricule: "/>
+													    <Run Text="{Binding Matricule}"/>
+                                                    </TextBlock>
+                                                    <TextBlock Style="{ThemeResource BodyTextBlockStyle}" >
+													    <Run Text="Note: "/>
+													    <Run Text="{Binding Note}"/>
+                                                    </TextBlock>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ListView.ItemTemplate>
+                                    </ListView>
+                                </StackPanel>
+                            </ScrollViewer>
+                        </Grid>
+                    </DataTemplate>
+                </ContentPresenter.ContentTemplate>
+                <ContentPresenter.ContentTransitions>
+                    <TransitionCollection/>
+                </ContentPresenter.ContentTransitions>
+            </ContentPresenter>
+        </Grid>
     </Grid>
 </Page>

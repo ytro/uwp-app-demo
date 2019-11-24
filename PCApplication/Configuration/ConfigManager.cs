@@ -54,7 +54,8 @@ namespace PCApplication.Configuration {
 
         public static string GetBaseServerUri() {
             //return $"https://{GetValueFromKey("ServerIP")}:{GetValueFromKey("port")}";
-            return $"https://p3.thephosphorus.dev"; 
+            // return $"https://p3.thephosphorus.dev"; 
+            return $"https://45fe8231-ccbf-4494-8257-8d66f753582a.mock.pstmn.io";
         }
     }
 }

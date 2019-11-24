@@ -25,7 +25,6 @@ namespace PCApplication.Services {
         public RestService() { }
 
         public async Task<bool> Login(string username, string password) {
-            return true;
             string requestUri = ConfigManager.GetBaseServerUri() + "/usager/login";
             try {
                 HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, requestUri);
@@ -68,9 +67,9 @@ namespace PCApplication.Services {
                     _ = DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
                     return false;
                 }
-            } catch { }
-
-            return false;
+            } catch {
+                return false;
+            }
         }
 
         public async Task<bool> Logout() {
@@ -202,15 +201,57 @@ namespace PCApplication.Services {
             }
         }
 
-        public async Task<object> GetBlockchain(HostEnum source) {
+        public async Task<BlockchainResponse> GetBlockchain(HostEnum source) {
             string requestUri = ConfigManager.GetBaseServerUri() + "/admin/chaine";
+
             switch (source) {
-                case HostEnum.Miner1: requestUri += "/1"; break;
-                case HostEnum.Miner2: requestUri += "/2"; break;
-                case HostEnum.Miner3: requestUri += "/3"; break;
+                case HostEnum.Miner1: requestUri += "/c1"; break;
+                case HostEnum.Miner2: requestUri += "/c2"; break;
+                case HostEnum.Miner3: requestUri += "/c3"; break;
             }
 
-            throw new System.NotImplementedException();
+            // Prepare request
+            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, requestUri);
+
+            // Send request
+            try {
+                HttpResponseMessage response = await _client.SendAsync(request);
+
+                if (response.IsSuccessStatusCode) { // 200-299
+                    // Get response
+                    string responseContent = await response.Content.ReadAsStringAsync();
+
+                    // Check JSON reponse against schema
+                    JsonSchema schema = JsonSchema.FromType<BlockchainResponse>();
+                    var errors = schema.Validate(responseContent);
+                    if (errors.Count > 0) {
+                        _ = DialogService.ShowAsync("Erreur: Réponse malformée du serveur", title: "Erreur", primary: "OK");
+                        return null;
+                    }
+
+                    // Mocked response
+                    // responseContent = StringResources.GetString("mockValidLogsJson");
+
+                    // Return deserialized JSON object
+                    return JsonConvert.DeserializeObject<BlockchainResponse>(responseContent);
+
+                } else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400 Bad request
+                    _ = DialogService.ShowAsync("Erreur 400: Mauvaise requête", title: "Erreur", primary: "OK");
+                    return null;
+                } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 401 Unauthorized
+                    _ = DialogService.ShowAsync("Erreur 403: Non authorisé", title: "Erreur", primary: "OK");
+                    return null;
+                } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
+                    _ = DialogService.ShowAsync("Erreur 404: Non trouvé", title: "Erreur", primary: "OK");
+                    return null;
+                } else {
+                    _ = DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
+                    return null;
+                }
+            } catch {
+                _ = DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
+                return null;
+            }
         }
 
 
@@ -218,9 +259,9 @@ namespace PCApplication.Services {
             string requestUri = ConfigManager.GetBaseServerUri() + "/admin/logs";
 
             switch (source) {
-                case HostEnum.Miner1: requestUri += "/1"; break;
-                case HostEnum.Miner2: requestUri += "/2"; break;
-                case HostEnum.Miner3: requestUri += "/3"; break;
+                case HostEnum.Miner1: requestUri += "/logun"; break;
+                case HostEnum.Miner2: requestUri += "/logd"; break;
+                case HostEnum.Miner3: requestUri += "/logt"; break;
                 case HostEnum.WebServer: requestUri += "/serveurweb"; break;
             }
 
@@ -274,19 +315,6 @@ namespace PCApplication.Services {
         }
 
         public async Task<UsersResponse> GetUsers() {
-
-            // Mocked response
-            string responseContent = StringResources.GetString("mockValidUsersJson");
-            // Check JSON reponse against schema
-            JsonSchema schema = JsonSchema.FromType<UsersResponse>();
-            var errors = schema.Validate(responseContent);
-            if (errors.Count > 0) {
-                // Debug.WriteLine(error.Path + ": " + error.Kind);
-                return null;
-            }
-            // Return deserialized JSON object
-            return JsonConvert.DeserializeObject<UsersResponse>(responseContent);
-            /*
             string requestUri = ConfigManager.GetBaseServerUri() + "/users";
 
             // Prepare request
@@ -304,7 +332,7 @@ namespace PCApplication.Services {
                     JsonSchema schema = JsonSchema.FromType<UsersResponse>();
                     var errors = schema.Validate(responseContent);
                     if (errors.Count > 0) {
-                        DialogService.ShowAsync("Erreur: Mauvaise malformée du serveur", title: "Erreur", primary: "OK");
+                        _ = DialogService.ShowAsync("Erreur: Mauvaise malformée du serveur", title: "Erreur", primary: "OK");
                         return null;
                     }
 
@@ -312,22 +340,22 @@ namespace PCApplication.Services {
                     return JsonConvert.DeserializeObject<UsersResponse>(responseContent);
 
                 } else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400 Bad request
-                    DialogService.ShowAsync("Erreur 400: Mauvaise requête", title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Erreur 400: Mauvaise requête", title: "Erreur", primary: "OK");
                     return null;
                 } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 401 Unauthorized
-                    DialogService.ShowAsync("Erreur 403: Non authorisé", title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Erreur 403: Non authorisé", title: "Erreur", primary: "OK");
                     return null;
                 } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
-                    DialogService.ShowAsync("Erreur 404: Non trouvé", title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Erreur 404: Non trouvé", title: "Erreur", primary: "OK");
                     return null;
                 } else {
-                    DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
                     return null;
                 }
             } catch {
-                DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
+                _ = DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
                 return null;
-            }*/
+            }
         }
     }
 
@@ -340,7 +368,7 @@ namespace PCApplication.Services {
         Task<bool> DeleteAccount(string username);                                  // POST /admin/suppressioncompte
 
         // Requêtes GET requises
-        Task<object> GetBlockchain(HostEnum source);                                // GET /admin/chaine/[1-3]
+        Task<BlockchainResponse> GetBlockchain(HostEnum source);                                // GET /admin/chaine/[1-3]
         Task<LogsResponse> GetLogs(HostEnum source, int lastReceived);              // GET /admin/logs/[1-3] et GET /admin/logs/serveurweb
 
         // Requêtes GET optionnelles

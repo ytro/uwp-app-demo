@@ -2,6 +2,8 @@
 
 namespace PCApplication {
     public enum HostEnum {
+        Undefined = 0,
+
         [Description("Mineur 1")]
         Miner1 = 1,
 

@@ -83,17 +83,31 @@ namespace PCApplication.ViewModels {
 
         public RelayCommand DeleteAccountCommand { get;  }
         public bool DeleteAccountCommandCanExecute() {
-            return SelectedAccount != null && !IsBusy;
+            return !IsBusy;
         }
         public async void DeleteAccountCommandExecute() {
-            bool result = await DialogService.ShowAsync($"Supprimer le compte usager {SelectedAccount.Username}?", 
-                title: "Confirmation", primary: "Oui", secondary: "Annuler");
+            bool result = false;
+            string usernameToDelete = SelectedAccount?.Username;
+
+            if (SelectedAccount == null) {
+                var vm = ServiceLocator.Instance.GetService<DeleteAccountViewModel>();
+                var deleteAccountDialog = new DeleteAccountContentDialog(vm);
+                result = await DialogService.ShowAsync(deleteAccountDialog);
+                usernameToDelete = vm.Username;
+            }
+            else
+                result = await DialogService.ShowAsync($"Supprimer le compte usager {SelectedAccount.Username}?", 
+                    title: "Confirmation", primary: "Oui", secondary: "Annuler");
+
             if (result) {
                 IsBusy = true;
 
-                bool response = await RestService.DeleteAccount(SelectedAccount.Username);
+                bool response = await RestService.DeleteAccount(usernameToDelete);
+                //bool response = true;
                 if (response) {
-                    DisplayedAccounts.Remove(SelectedAccount);
+                    DialogService.ShowAsync($"Compte {usernameToDelete} supprimé avec succès", "Succès", "OK");
+                    if (SelectedAccount != null)
+                        DisplayedAccounts.Remove(SelectedAccount);
                 }
 
                 IsBusy = false;

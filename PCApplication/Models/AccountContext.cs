@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace PCApplication.Models {
-    class AccountContext {
+    public class AccountContext {
 
         public static AccountContext Instance { get; private set; } = new AccountContext();
 
@@ -20,7 +20,7 @@ namespace PCApplication.Models {
         }
 
         public static bool Cleanup() {
-            Instance.Accounts.RemoveAll(e => true);
+            Instance.Accounts.Clear();
             return true;
         }
     }
