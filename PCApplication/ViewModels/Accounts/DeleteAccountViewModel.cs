@@ -3,9 +3,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace PCApplication.ViewModels {
+    // Viewmodel for the delete account dialog
     class DeleteAccountViewModel : ViewModelBase {
 
         public DeleteAccountViewModel() {
@@ -31,7 +33,10 @@ namespace PCApplication.ViewModels {
         }
 
         private void UpdateCanDeleteAccountValue() {
-            CanDeleteAccount = !String.IsNullOrEmpty(Username);
+            Regex alphanumerical = new Regex("^[a-zA-Z0-9]*$");
+
+            CanDeleteAccount = !String.IsNullOrEmpty(Username) && alphanumerical.IsMatch(_username);
+            
         }
     }
 }

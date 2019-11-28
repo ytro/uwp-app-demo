@@ -25,7 +25,7 @@
                 <ProgressRing IsActive="{Binding IsBusy}" />
             </CommandBar.Content>
 
-            <AppBarButton Icon="Filter" Label="Filtrer la provenance" LabelPosition="Default" IsEnabled="{Binding IsBusy,Mode=OneWay, Converter={StaticResource InvertedBooleanConverter}}">
+            <AppBarButton Icon="Filter" Label="Filtrer l'affichage" LabelPosition="Default" IsEnabled="{Binding IsBusy,Mode=OneWay, Converter={StaticResource InvertedBooleanConverter}}">
                 <AppBarButton.Flyout>
                     <Flyout>
                         <StackPanel Orientation="Vertical" >

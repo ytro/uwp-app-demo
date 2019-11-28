@@ -65,21 +65,25 @@
             HorizontalContentAlignment="Right" 
             VerticalContentAlignment="Center" VerticalAlignment="Center" DefaultLabelPosition="Right" Background="Transparent">
             <CommandBar.Content>
-                <ProgressRing IsActive="{Binding IsBusy}" />
+                <StackPanel Orientation="Horizontal">
+                    <ProgressRing IsActive="{Binding IsBusy}" />
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        Text="Nombre de blocs à recevoir"
+                        Margin="0,0,5,0"/>
+                    <Slider
+                        
+                        Width="200"
+	                    Maximum="200"
+	                    Minimum="0"
+	                    StepFrequency="2.0"
+	                    TickFrequency="2.0"
+	                    Value="{Binding AmountToReceive, Mode=TwoWay}"
+	                    TickPlacement="TopLeft"
+	                    SnapsTo="Ticks"
+	                    VerticalAlignment="Center" />
+                </StackPanel>
             </CommandBar.Content>
-            <AppBarButton Icon="Download" Label="Nombre de blocs à recevoir" LabelPosition="Default" IsEnabled="{Binding IsBusy,Mode=OneWay, Converter={StaticResource InvertedBooleanConverter}}">
-                <AppBarButton.Flyout>
-                    <Flyout>
-                        <StackPanel Orientation="Vertical" >
-                            <RadioButton Content="10" Tag="10" Checked="CountRadioButton_Checked" />
-                            <RadioButton Content="20" Tag="20" Checked="CountRadioButton_Checked"/>
-                            <RadioButton Content="40" Tag="40" Checked="CountRadioButton_Checked"/>
-                            <RadioButton Content="100" Tag="100" Checked="CountRadioButton_Checked"/>
-                            <RadioButton Content="Tous" Tag="0" Checked="CountRadioButton_Checked" IsChecked="True"/>
-                        </StackPanel>
-                    </Flyout>
-                </AppBarButton.Flyout>
-            </AppBarButton>
             <AppBarButton Icon="Refresh" Click="Actualiser_Click" Label="Actualiser la chaîne de blocs" LabelPosition="Default" IsEnabled="{Binding IsBusy,Mode=OneWay, Converter={StaticResource InvertedBooleanConverter}}">
                 <AppBarButton.Flyout>
                     <MenuFlyout x:Name="menuActualiser">

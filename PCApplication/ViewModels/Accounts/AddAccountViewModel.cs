@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace PCApplication.ViewModels {
+    // Viewmodel for the add account dialog
     class AddAccountViewModel : ViewModelBase {
 
         public AddAccountViewModel() {

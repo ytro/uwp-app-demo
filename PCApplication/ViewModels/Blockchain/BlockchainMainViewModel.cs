@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 
 namespace PCApplication.ViewModels {
     public class BlockchainMainViewModel : ViewModelBase {
+        // Viewmodel for the blockchain view
         private int _amountToReceive = 0;
         public IRestService RestService { get; }
 
@@ -33,6 +34,14 @@ namespace PCApplication.ViewModels {
             get => _isBlockSelected;
             set {
                 _isBlockSelected = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public int AmountToReceive {
+            get => _amountToReceive;
+            set {
+                _amountToReceive = value;
                 RaisePropertyChanged();
             }
         }

@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
 
 namespace PCApplication.ViewModels {
-
+    // Viewmodel for the accounts view
     public class AccountsMainViewModel : ViewModelBase {
 
         public AccountsMainViewModel(IRestService restService, INavigationService navigationService) {

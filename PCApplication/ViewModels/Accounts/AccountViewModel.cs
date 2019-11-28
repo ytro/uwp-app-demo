@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace PCApplication.ViewModels {
+    // Viewmodel for each account
     public class AccountViewModel : ViewModelBase {
         public AccountViewModel(string username, bool edition) {
             Username = username;

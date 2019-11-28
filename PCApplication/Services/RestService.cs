@@ -51,8 +51,7 @@ namespace PCApplication.Services {
                     // Check JSON reponse against schema
                     JsonSchema schema = JsonSchema.FromType<TokenResponse>();
                     var errors = schema.Validate(responseContent);
-                    if (errors.Count > 0)
-                    {
+                    if (errors.Count > 0) {
                         return false;
                     }
 
@@ -61,24 +60,28 @@ namespace PCApplication.Services {
                     this._token = token.AccessToken;
 
                     return true;
-                } else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400
-                    _ = DialogService.ShowAsync("Mauvaise requête", title: "Erreur 400", primary: "OK");
-                    return false;
-                } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 403
-                    _ = DialogService.ShowAsync("Mauvais mot de passe", title: "Erreur 401", primary: "OK");
-                    return false;
-                } else if (response.StatusCode == System.Net.HttpStatusCode.Forbidden) { // 403
-                    _ = DialogService.ShowAsync("Mauvais mot de passe", title: "Erreur 403", primary: "OK");
-                    return false;
-                } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
-                    _ = DialogService.ShowAsync("Non trouvé", title: "Erreur 404", primary: "OK");
-                    return false;
                 } else {
-                    _ = DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
-                    return false;
+                    string errorTitle = $"Erreur {(int)response.StatusCode}";
+
+                    if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400
+                        _ = DialogService.ShowAsync("Mauvaise requête", errorTitle, primary: "OK");
+                        return false;
+                    } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 403
+                        _ = DialogService.ShowAsync("Mauvais mot de passe", errorTitle, primary: "OK");
+                        return false;
+                    } else if (response.StatusCode == System.Net.HttpStatusCode.Forbidden) { // 403
+                        _ = DialogService.ShowAsync("Mauvais mot de passe", errorTitle, primary: "OK");
+                        return false;
+                    } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
+                        _ = DialogService.ShowAsync("Point d'accès non trouvé", errorTitle, primary: "OK");
+                        return false;
+                    } else {
+                        _ = DialogService.ShowAsync($"Erreur de connexion ({response.StatusCode.ToString()})", errorTitle, primary: "OK");
+                        return false;
+                    }
                 }
             } catch {
-                _ = DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
+                _ = DialogService.ShowAsync("Erreur de connexion", title: "Erreur", primary: "OK");
                 return false;
             }
         }
@@ -112,7 +115,7 @@ namespace PCApplication.Services {
             string json = new JObject
             {
                 { "ancien", oldPassword },
-                { "nouveau", ComputeSHA256(newPassword) }
+                { "nouveau", newPassword }
             }.ToString();
 
             HttpRequestMessage request = new HttpRequestMessage {
@@ -130,21 +133,25 @@ namespace PCApplication.Services {
 
                 if (response.IsSuccessStatusCode) { // 200-299
                     return true;
-                } else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400
-                    _ = DialogService.ShowAsync("Mauvaise requête", title: "Erreur 400", primary: "OK");
-                    return false;
-                } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 401
-                    _ = DialogService.ShowAsync("Non authorisé", title: "Erreur 401", primary: "OK");
-                    return false;
-                } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
-                    _ = DialogService.ShowAsync("Non trouvé", title: "Erreur 404", primary: "OK");
-                    return false;
                 } else {
-                    _ = DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
-                    return false;
+                    string errorTitle = $"Erreur {(int)response.StatusCode}";
+
+                    if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400
+                        _ = DialogService.ShowAsync("Mauvaise requête", errorTitle, primary: "OK");
+                        return false;
+                    } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 401
+                        _ = DialogService.ShowAsync("Non authorisé", errorTitle, primary: "OK");
+                        return false;
+                    } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
+                        _ = DialogService.ShowAsync("Point d'accès non trouvé", errorTitle, primary: "OK");
+                        return false;
+                    } else {
+                        _ = DialogService.ShowAsync($"Erreur de connexion ({response.StatusCode.ToString()})", errorTitle, primary: "OK");
+                        return false;
+                    }
                 }
             } catch {
-                _ = DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
+                _ = DialogService.ShowAsync("Erreur de connexion", title: "Erreur", primary: "OK");
                 return false;
             }
         }
@@ -177,27 +184,31 @@ namespace PCApplication.Services {
 
                 if (response.IsSuccessStatusCode) { // 200-299
                     return true;
-                } else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400
-                    _ = DialogService.ShowAsync("Mauvaise requête", title: "Erreur 400", primary: "OK");
-                    return false;
-                } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 401
-                    _ = DialogService.ShowAsync("Non authorisé", title: "Erreur 401", primary: "OK");
-                    return false;
-                } else if (response.StatusCode == System.Net.HttpStatusCode.Forbidden) { // 403
-                    _ = DialogService.ShowAsync("Non authorisé", title: "Erreur 403", primary: "OK");
-                    return false;
-                } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
-                    _ = DialogService.ShowAsync("Non trouvé", title: "Erreur 404", primary: "OK");
-                    return false;
-                } else if (response.StatusCode == System.Net.HttpStatusCode.Conflict) { // 409
-                    _ = DialogService.ShowAsync("Un compte portant le même nom existe déjà", title: "Erreur 409", primary: "OK");
-                    return false;
                 } else {
-                    _ = DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
-                    return false;
+                    string errorTitle = $"Erreur {(int)response.StatusCode}";
+
+                    if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400
+                        _ = DialogService.ShowAsync("Mauvaise requête", errorTitle, primary: "OK");
+                        return false;
+                    } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 401
+                        _ = DialogService.ShowAsync("Non authorisé", errorTitle, primary: "OK");
+                        return false;
+                    } else if (response.StatusCode == System.Net.HttpStatusCode.Forbidden) { // 403
+                        _ = DialogService.ShowAsync("Non authorisé", errorTitle, primary: "OK");
+                        return false;
+                    } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
+                        _ = DialogService.ShowAsync("Point d'accès non trouvé", errorTitle, primary: "OK");
+                        return false;
+                    } else if (response.StatusCode == System.Net.HttpStatusCode.Conflict) { // 409
+                        _ = DialogService.ShowAsync("Un compte portant le même nom existe déjà", errorTitle, primary: "OK");
+                        return false;
+                    } else {
+                        _ = DialogService.ShowAsync($"Erreur de connexion ({response.StatusCode.ToString()})", errorTitle, primary: "OK");
+                        return false;
+                    }
                 }
             } catch {
-                _ = DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
+                _ = DialogService.ShowAsync("Erreur de connexion", title: "Erreur", primary: "OK");
                 return false;
             }
         }
@@ -228,24 +239,28 @@ namespace PCApplication.Services {
 
                 if (response.IsSuccessStatusCode) { // 200-299
                     return true;
-                } else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400
-                    _ = DialogService.ShowAsync("Mauvaise requête", title: "Erreur 400", primary: "OK");
-                    return false;
-                } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 401
-                    _ = DialogService.ShowAsync("Non authorisé", title: "Erreur 401", primary: "OK");
-                    return false;
-                } else if (response.StatusCode == System.Net.HttpStatusCode.Forbidden) { // 403
-                    _ = DialogService.ShowAsync("Non authorisé", title: "Erreur 403", primary: "OK");
-                    return false;
-                } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
-                    _ = DialogService.ShowAsync("Non trouvé", title: "Erreur 404", primary: "OK");
-                    return false;
                 } else {
-                    _ = DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
-                    return false;
+                    string errorTitle = $"Erreur {(int)response.StatusCode}";
+
+                    if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400
+                        _ = DialogService.ShowAsync("Mauvaise requête", errorTitle, primary: "OK");
+                        return false;
+                    } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 401
+                        _ = DialogService.ShowAsync("Non authorisé", errorTitle, primary: "OK");
+                        return false;
+                    } else if (response.StatusCode == System.Net.HttpStatusCode.Forbidden) { // 403
+                        _ = DialogService.ShowAsync("Non authorisé", errorTitle, primary: "OK");
+                        return false;
+                    } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
+                        _ = DialogService.ShowAsync("Point d'accès non trouvé", errorTitle, primary: "OK");
+                        return false;
+                    } else {
+                        _ = DialogService.ShowAsync($"Erreur de connexion ({response.StatusCode.ToString()})", errorTitle, primary: "OK");
+                        return false;
+                    }
                 }
             } catch {
-                _ = DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
+                _ = DialogService.ShowAsync("Erreur de connexion", title: "Erreur", primary: "OK");
                 return false;
             }
         }
@@ -271,7 +286,7 @@ namespace PCApplication.Services {
             }.ToString();
 
             HttpRequestMessage request = new HttpRequestMessage {
-                Method = HttpMethod.Post,
+                Method = HttpMethod.Get,
                 RequestUri = new Uri(requestUri),
                 Headers = { { HttpRequestHeader.Authorization.ToString(), _token } },
                 Content = new StringContent(json, Encoding.UTF8, "application/json")
@@ -299,21 +314,25 @@ namespace PCApplication.Services {
                     // Return deserialized JSON object
                     return JsonConvert.DeserializeObject<BlockchainResponse>(responseContent);
 
-                } else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400
-                    _ = DialogService.ShowAsync("Mauvaise requête", title: "Erreur 400", primary: "OK");
-                    return null;
-                } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 401
-                    _ = DialogService.ShowAsync("Non authorisé", title: "Erreur 401", primary: "OK");
-                    return null;
-                } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
-                    _ = DialogService.ShowAsync("Non trouvé", title: "Erreur 404", primary: "OK");
-                    return null;
                 } else {
-                    _ = DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
-                    return null;
+                    string errorTitle = $"Erreur {(int)response.StatusCode}";
+
+                    if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400
+                        _ = DialogService.ShowAsync("Mauvaise requête", errorTitle, primary: "OK");
+                        return null;
+                    } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 401
+                        _ = DialogService.ShowAsync("Non authorisé", errorTitle, primary: "OK");
+                        return null;
+                    } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
+                        _ = DialogService.ShowAsync("Point d'accès non trouvé", errorTitle, primary: "OK");
+                        return null;
+                    } else {
+                        _ = DialogService.ShowAsync($"Erreur de connexion ({response.StatusCode.ToString()})", errorTitle, primary: "OK");
+                        return null;
+                    }
                 }
             } catch {
-                _ = DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
+                _ = DialogService.ShowAsync("Erreur de connexion", title: "Erreur", primary: "OK");
                 return null;
             }
         }
@@ -366,21 +385,25 @@ namespace PCApplication.Services {
                     // Return deserialized JSON object
                     return JsonConvert.DeserializeObject<LogsResponse>(responseContent);
 
-                } else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400 Bad request
-                    _ = DialogService.ShowAsync("Mauvaise requête", title: "Erreur 400", primary: "OK");
-                    return null;
-                } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 401 Unauthorized
-                    _ = DialogService.ShowAsync("Non authorisé", title: "Erreur 401", primary: "OK");
-                    return null;
-                } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
-                    _ = DialogService.ShowAsync("Non trouvé", title: "Erreur 404", primary: "OK");
-                    return null;
                 } else {
-                    _ = DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
-                    return null;
+                    string errorTitle = $"Erreur {(int)response.StatusCode}";
+
+                    if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400 Bad request
+                        _ = DialogService.ShowAsync("Mauvaise requête", errorTitle, primary: "OK");
+                        return null;
+                    } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 401 Unauthorized
+                        _ = DialogService.ShowAsync("Non authorisé", errorTitle, primary: "OK");
+                        return null;
+                    } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
+                        _ = DialogService.ShowAsync("Point d'accès non trouvé", errorTitle, primary: "OK");
+                        return null;
+                    } else {
+                        _ = DialogService.ShowAsync($"Erreur de connexion ({response.StatusCode.ToString()})", errorTitle, primary: "OK");
+                        return null;
+                    }
                 }
             } catch {
-                _ = DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
+                _ = DialogService.ShowAsync("Erreur de connexion", title: "Erreur", primary: "OK");
                 return null;
             }
         }
@@ -418,21 +441,25 @@ namespace PCApplication.Services {
                     // Return deserialized JSON object
                     return JsonConvert.DeserializeObject<UsersResponse>(responseContent);
 
-                } else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400 Bad request
-                    _ = DialogService.ShowAsync("Mauvaise requête", title: "Erreur 400", primary: "OK");
-                    return null;
-                } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 401 Unauthorized
-                    _ = DialogService.ShowAsync("Non authorisé", title: "Erreur 401", primary: "OK");
-                    return null;
-                } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
-                    _ = DialogService.ShowAsync("Non trouvé", title: "Erreur 404", primary: "OK");
-                    return null;
                 } else {
-                    _ = DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
-                    return null;
+                    string errorTitle = $"Erreur {(int)response.StatusCode}";
+
+                    if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400 Bad request
+                        _ = DialogService.ShowAsync("Mauvaise requête", errorTitle, primary: "OK");
+                        return null;
+                    } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 401 Unauthorized
+                        _ = DialogService.ShowAsync("Non authorisé", errorTitle, primary: "OK");
+                        return null;
+                    } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
+                        _ = DialogService.ShowAsync("Point d'accès non trouvé", errorTitle, primary: "OK");
+                        return null;
+                    } else {
+                        _ = DialogService.ShowAsync($"Erreur de connexion ({response.StatusCode.ToString()})", errorTitle, primary: "OK");
+                        return null;
+                    }
                 }
             } catch {
-                _ = DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
+                _ = DialogService.ShowAsync("Erreur de connexion", title: "Erreur", primary: "OK");
                 return null;
             }
         }

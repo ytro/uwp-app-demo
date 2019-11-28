@@ -46,14 +46,5 @@ namespace PCApplication.Views {
             ViewModel.GetBlockchain(HostEnum.Miner3);
         }
 
-        private void CountRadioButton_Checked(object sender, RoutedEventArgs e) {
-            RadioButton rb = sender as RadioButton;
-            HostEnum host = HostEnum.Undefined;
-            if (rb != null) {
-                string tag = rb.Tag.ToString();
-                ViewModel?.SetAmount(Convert.ToInt32(tag));
-            }
-        }
-
     }
 }
