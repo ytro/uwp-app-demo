@@ -5,13 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PCApplication.Models
-{
-    public class Blockchain
-    {
+namespace PCApplication.Models {
+    public class Blockchain {
         public static Blockchain Instance { get; private set; } = new Blockchain();
-
-
 
         public List<Block> Blocks { get; private set; }
 
@@ -26,7 +22,7 @@ namespace PCApplication.Models
 
             return true;
         }
-        
+
         public static bool Cleanup() {
             Instance.Blocks.Clear();
             return true;

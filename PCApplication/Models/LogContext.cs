@@ -60,7 +60,6 @@ namespace PCApplication.Models
                 case HostEnum.Miner3: source = "Mineur 3"; break;
                 case HostEnum.WebServer: source = "Serveur Web"; break;
             }
-          //  sb.AppendLine(string.Format("{0}:{1}:{2}:{3}:{4}", entry.Number, entry.Severity, entry.DateAndTime, source, entry.Message));
             sb.AppendLine(string.Format("{0}:{1}:{2}:{3}", entry.Number, entry.Severity, entry.DateAndTime, entry.Message));
             return sb.ToString();
         }

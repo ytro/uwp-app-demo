@@ -7,10 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PCApplication.Models
-{
-    public class Block
-    {
+namespace PCApplication.Models {
+    public class Block {
         public int Index { get; set; } // size_t
         public BlockData Data { get; set; } // std::string
         public string PreviousHash { get; set; } // std::string
@@ -30,8 +28,7 @@ namespace PCApplication.Models
             Validation = validation;
         }
 
-        public class BlockData 
-        {
+        public class BlockData {
             public string Nom { get; set; } = "Non disponible";
             public List<Resultat> Resultats { get; set; } = new List<Resultat>();
             public string Sigle { get; set; } = "Non disponible";
