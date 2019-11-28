@@ -71,11 +71,22 @@ namespace PCApplication.ViewModels {
             if (result) {
                 IsBusy = true;
 
-                bool response = await RestService.CreateAccount(vm.Username, vm.Password, vm.IsEditor);
+                bool found = false;
+                foreach (AccountViewModel account in DisplayedAccounts) {
+                    if (account.Username == vm.Username) {
+                        found = true;
+                        _ = DialogService.ShowAsync($"Compte {vm.Username} existe déjà", "Erreur", "OK");
+                        break;
+                    }
+                }
+                if (!found) {
+                    bool response = await RestService.CreateAccount(vm.Username, vm.Password, vm.IsEditor);
 
-                if (response)
-                    DisplayedAccounts.Add(new AccountViewModel(vm.Username, vm.IsEditor));
-
+                    if (response) {
+                        DisplayedAccounts.Add(new AccountViewModel(vm.Username, vm.IsEditor));
+                        _ = DialogService.ShowAsync($"Compte {vm.Username} ajouté avec succès!", "Succès", "OK");
+                    }
+                }
                 IsBusy = false;
             }
 
@@ -103,9 +114,9 @@ namespace PCApplication.ViewModels {
                 IsBusy = true;
 
                 bool response = await RestService.DeleteAccount(usernameToDelete);
-                //bool response = true;
+
                 if (response) {
-                    DialogService.ShowAsync($"Compte {usernameToDelete} supprimé avec succès", "Succès", "OK");
+                    _ = DialogService.ShowAsync($"Compte {usernameToDelete} supprimé avec succès!", "Succès", "OK");
                     if (SelectedAccount != null)
                         DisplayedAccounts.Remove(SelectedAccount);
                 }

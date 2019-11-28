@@ -13,10 +13,11 @@ namespace PCApplication.Converters {
         public object Convert(object value, Type targetType, object parameter, string language) {
             switch ((int)value) {
                 case 0:
-                    return new SolidColorBrush(Colors.Red);
                 case 1:
-                    return new SolidColorBrush(Colors.Yellow);
+                    return new SolidColorBrush(Colors.Red);
                 case 2:
+                    return new SolidColorBrush(Colors.Yellow);
+                case 3:
                     return new SolidColorBrush(Colors.Green);
             }
             return new SolidColorBrush(Colors.LightGray);

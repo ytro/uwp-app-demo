@@ -23,7 +23,8 @@ namespace PCApplication.Models
             Index = index;
             Data = new BlockData(data);
             PreviousHash = previousHash;
-            Timestamp = new DateTime(1970, 1, 1).AddSeconds(timestamp);
+            DateTime origin = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            Timestamp = origin.AddSeconds(timestamp).ToLocalTime();
             Hash = hash;
             Nonce = nonce;
             Validation = validation;

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PCApplication.JsonSchemas {
     public class BlockchainResponse {
-        [Newtonsoft.Json.JsonProperty("Blocks", Required = Newtonsoft.Json.Required.Always)]
+        [Newtonsoft.Json.JsonProperty("blocks", Required = Newtonsoft.Json.Required.Always)]
         public List<Block> Blocks { get; set; }
     }
 

@@ -11,6 +11,8 @@ namespace PCApplication.Models
     {
         public static Blockchain Instance { get; private set; } = new Blockchain();
 
+
+
         public List<Block> Blocks { get; private set; }
 
         public Blockchain() { Blocks = new List<Block>(); }

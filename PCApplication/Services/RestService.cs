@@ -8,6 +8,7 @@ using System;
 using System.Diagnostics;
 using System.Net;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -29,7 +30,7 @@ namespace PCApplication.Services {
             string json = new JObject
 {
                    { "usager", "admin" },
-                   { "mot_de_passe", password}
+                   { "mot_de_passe", password }
                 }.ToString();
 
             try {
@@ -64,6 +65,9 @@ namespace PCApplication.Services {
                     _ = DialogService.ShowAsync("Mauvaise requête", title: "Erreur 400", primary: "OK");
                     return false;
                 } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 403
+                    _ = DialogService.ShowAsync("Mauvais mot de passe", title: "Erreur 401", primary: "OK");
+                    return false;
+                } else if (response.StatusCode == System.Net.HttpStatusCode.Forbidden) { // 403
                     _ = DialogService.ShowAsync("Mauvais mot de passe", title: "Erreur 403", primary: "OK");
                     return false;
                 } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
@@ -82,7 +86,7 @@ namespace PCApplication.Services {
 
         #region Logout
         public async Task<bool> Logout() {
-            string requestUri = ConfigManager.GetBaseServerUri() + "/admin/logout";
+            string requestUri = ConfigManager.GetBaseServerUri() + "/usager/logout";
             try {
                 HttpRequestMessage request = new HttpRequestMessage {
                     Method = HttpMethod.Post,
@@ -102,13 +106,13 @@ namespace PCApplication.Services {
 
         #region Mot de passe
         public async Task<bool> ChangePassword(string oldPassword, string newPassword) {
-            string requestUri = ConfigManager.GetBaseServerUri() + "/admin/motdepasse";
+            string requestUri = ConfigManager.GetBaseServerUri() + "/usager/motdepasse";
 
             // Prepare request
             string json = new JObject
             {
                 { "ancien", oldPassword },
-                { "nouveau", newPassword }
+                { "nouveau", ComputeSHA256(newPassword) }
             }.ToString();
 
             HttpRequestMessage request = new HttpRequestMessage {
@@ -148,22 +152,22 @@ namespace PCApplication.Services {
 
         #region Creation compte
         public async Task<bool> CreateAccount(string username, string password, bool isEditor) {
-            string requestUri = ConfigManager.GetBaseServerUri() + "/admin/creationcompte";
+            string requestUri = ConfigManager.GetBaseServerUri() + "/usager/admin/creationcompte";
+
+            string sha = ComputeSHA256(password);
 
             // Prepare request
             string json = new JObject
             {
                 { "usager", username },
-                { "mot_de_passe", password },
+                { "mot_de_passe", sha },
                 { "edition", isEditor }
             }.ToString();
 
             HttpRequestMessage request = new HttpRequestMessage {
                 Method = HttpMethod.Post,
                 RequestUri = new Uri(requestUri),
-                Headers = {
-                        { HttpRequestHeader.Authorization.ToString(), _token }
-                    },
+                Headers = { { HttpRequestHeader.Authorization.ToString(), _token } },
                 Content = new StringContent(json, Encoding.UTF8, "application/json")
             };
 
@@ -201,7 +205,7 @@ namespace PCApplication.Services {
 
         #region Suppression compte
         public async Task<bool> DeleteAccount(string username) {
-            string requestUri = ConfigManager.GetBaseServerUri() + "/admin/suppressioncompte";
+            string requestUri = ConfigManager.GetBaseServerUri() + "/usager/admin/suppressioncompte";
 
             // Prepare request
             string json = new JObject
@@ -210,7 +214,7 @@ namespace PCApplication.Services {
             }.ToString();
 
             HttpRequestMessage request = new HttpRequestMessage {
-                Method = HttpMethod.Post,
+                Method = HttpMethod.Delete,
                 RequestUri = new Uri(requestUri),
                 Headers = {
                         { HttpRequestHeader.Authorization.ToString(), _token }
@@ -248,22 +252,29 @@ namespace PCApplication.Services {
         #endregion
 
         #region Chaine de blocs
-        public async Task<BlockchainResponse> GetBlockchain(HostEnum source) {
+        public async Task<BlockchainResponse> GetBlockchain(HostEnum source, int amount) {
             string requestUri = ConfigManager.GetBaseServerUri() + "/admin/chaine";
 
-            switch (source) {
-                case HostEnum.Miner1: requestUri += "/c1"; break;
-                case HostEnum.Miner2: requestUri += "/c2"; break;
-                case HostEnum.Miner3: requestUri += "/c3"; break;
-            }
+              switch (source) {
+                  case HostEnum.Miner1: requestUri += "/1"; break;
+                  case HostEnum.Miner2: requestUri += "/2"; break;
+                  case HostEnum.Miner3: requestUri += "/3"; break;
+              }
+              
+
 
             // Prepare request
+
+            string json = new JObject
+            {
+                { "derniers_blocs", amount }
+            }.ToString();
+
             HttpRequestMessage request = new HttpRequestMessage {
-                Method = HttpMethod.Get,
+                Method = HttpMethod.Post,
                 RequestUri = new Uri(requestUri),
-                Headers = {
-                        { HttpRequestHeader.Authorization.ToString(), _token }
-                }
+                Headers = { { HttpRequestHeader.Authorization.ToString(), _token } },
+                Content = new StringContent(json, Encoding.UTF8, "application/json")
             };
 
             // Send request
@@ -313,9 +324,9 @@ namespace PCApplication.Services {
             string requestUri = ConfigManager.GetBaseServerUri() + "/admin/logs";
 
             switch (source) {
-                case HostEnum.Miner1: requestUri += "/logun"; break;
-                case HostEnum.Miner2: requestUri += "/logd"; break;
-                case HostEnum.Miner3: requestUri += "/logt"; break;
+                case HostEnum.Miner1: requestUri += "/1"; break;
+                case HostEnum.Miner2: requestUri += "/2"; break;
+                case HostEnum.Miner3: requestUri += "/3"; break;
                 case HostEnum.WebServer: requestUri += "/serveurweb"; break;
             }
 
@@ -377,7 +388,7 @@ namespace PCApplication.Services {
 
         #region Usagers
         public async Task<UsersResponse> GetUsers() {
-            string requestUri = ConfigManager.GetBaseServerUri() + "/users";
+            string requestUri = ConfigManager.GetBaseServerUri() + "/usager/admin/usagers";
 
             // Prepare request
             HttpRequestMessage request = new HttpRequestMessage {
@@ -426,6 +437,21 @@ namespace PCApplication.Services {
             }
         }
         #endregion
+
+        public static string ComputeSHA256(string rawData) {
+            // Create a SHA256   
+            using (SHA256 sha256Hash = SHA256.Create()) {
+                // ComputeHash - returns byte array  
+                byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(rawData));
+
+                // Convert byte array to a string   
+                StringBuilder builder = new StringBuilder();
+                for (int i = 0; i < bytes.Length; i++) {
+                    builder.Append(bytes[i].ToString("x2"));
+                }
+                return builder.ToString();
+            }
+        }
     }
 
     public interface IRestService {
@@ -437,10 +463,11 @@ namespace PCApplication.Services {
         Task<bool> DeleteAccount(string username);                                  // POST /admin/suppressioncompte
 
         // Requêtes GET requises
-        Task<BlockchainResponse> GetBlockchain(HostEnum source);                                // GET /admin/chaine/[1-3]
+        Task<BlockchainResponse> GetBlockchain(HostEnum source, int amount);        // GET /admin/chaine/[1-3]
         Task<LogsResponse> GetLogs(HostEnum source, int lastReceived);              // GET /admin/logs/[1-3] et GET /admin/logs/serveurweb
 
         // Requêtes GET optionnelles
         Task<UsersResponse> GetUsers();                                             // GET /users...?
+        
     }
 }

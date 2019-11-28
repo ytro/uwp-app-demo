@@ -10,7 +10,7 @@ using System.Collections.ObjectModel;
 
 namespace PCApplication.ViewModels {
     public class BlockchainMainViewModel : ViewModelBase {
-
+        private int _amountToReceive = 0;
         public IRestService RestService { get; }
 
         public BlockchainMainViewModel(IRestService restService) {
@@ -44,13 +44,14 @@ namespace PCApplication.ViewModels {
             get => _isBusy;
             set {
                 _isBusy = value;
+                RaisePropertyChanged();
             }
         }
 
         public async void GetBlockchain(HostEnum host) {
             IsBusy = true;
 
-            BlockchainResponse response = await RestService.GetBlockchain(host);
+            BlockchainResponse response = await RestService.GetBlockchain(host, _amountToReceive);
 
             if (response != null) {
                 Blockchain.Instance.Update(response);
@@ -62,6 +63,10 @@ namespace PCApplication.ViewModels {
             }
 
             IsBusy = false;
+        }
+
+        internal void SetAmount(int tag) {
+            _amountToReceive = tag;
         }
     }
 }

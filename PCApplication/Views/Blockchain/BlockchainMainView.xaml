@@ -29,6 +29,7 @@
                          Width ="32"
                          Height="32"
                          Margin="6"
+                         Opacity="0.75"
                          VerticalAlignment="Center"
                          HorizontalAlignment="Center"
                          Fill="{Binding Validation, Converter={StaticResource ValidationToColorConverter}, Mode=OneWay}"/>
@@ -66,14 +67,25 @@
             <CommandBar.Content>
                 <ProgressRing IsActive="{Binding IsBusy}" />
             </CommandBar.Content>
-
+            <AppBarButton Icon="Download" Label="Nombre de blocs à recevoir" LabelPosition="Default" IsEnabled="{Binding IsBusy,Mode=OneWay, Converter={StaticResource InvertedBooleanConverter}}">
+                <AppBarButton.Flyout>
+                    <Flyout>
+                        <StackPanel Orientation="Vertical" >
+                            <RadioButton Content="10" Tag="10" Checked="CountRadioButton_Checked" />
+                            <RadioButton Content="20" Tag="20" Checked="CountRadioButton_Checked"/>
+                            <RadioButton Content="40" Tag="40" Checked="CountRadioButton_Checked"/>
+                            <RadioButton Content="100" Tag="100" Checked="CountRadioButton_Checked"/>
+                            <RadioButton Content="Tous" Tag="0" Checked="CountRadioButton_Checked" IsChecked="True"/>
+                        </StackPanel>
+                    </Flyout>
+                </AppBarButton.Flyout>
+            </AppBarButton>
             <AppBarButton Icon="Refresh" Click="Actualiser_Click" Label="Actualiser la chaîne de blocs" LabelPosition="Default" IsEnabled="{Binding IsBusy,Mode=OneWay, Converter={StaticResource InvertedBooleanConverter}}">
                 <AppBarButton.Flyout>
                     <MenuFlyout x:Name="menuActualiser">
                         <MenuFlyoutItem Text="Mineur 1" Click="MenuFlyoutItem1_Click" />
                         <MenuFlyoutItem Text="Mineur 2" Click="MenuFlyoutItem2_Click" />
                         <MenuFlyoutItem Text="Mineur 3" Click="MenuFlyoutItem3_Click" />
-                        <MenuFlyoutItem Text="Serveur web" Click="MenuFlyoutItem4_Click" />
                     </MenuFlyout>
                 </AppBarButton.Flyout>
             </AppBarButton>

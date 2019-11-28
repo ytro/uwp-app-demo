@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace PCApplication.ViewModels {
@@ -48,8 +49,11 @@ namespace PCApplication.ViewModels {
         }
 
         private void UpdateCanAddAccountValue() {
-            CanAddAccount = !String.IsNullOrEmpty(Username)
-                            && !String.IsNullOrEmpty(Password);
+            Regex alphanumerical = new Regex("^[a-zA-Z0-9]*$");
+
+            CanAddAccount = !String.IsNullOrEmpty(_username)
+                            && !String.IsNullOrEmpty(_password)
+                            && alphanumerical.IsMatch(_username);
         }
     }
 }
