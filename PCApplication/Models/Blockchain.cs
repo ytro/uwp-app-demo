@@ -19,7 +19,7 @@ namespace PCApplication.Models
             Blocks.Clear();
 
             foreach (JsonSchemas.Block block in response.Blocks) {
-                Blocks.Add(new Block(block.Index, block.Data, block.PreviousHash, block.Timestamp, block.Hash, block.Nonce));
+                Blocks.Add(new Block(block.Index, block.Data, block.PreviousHash, block.Timestamp, block.Hash, block.Nonce, block.Validation));
             }
 
             return true;

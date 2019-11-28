@@ -126,6 +126,7 @@
     <Compile Include="Converters\BooleanConverters\BooleanToBrushConverter.cs" />
     <Compile Include="Converters\BooleanConverters\BooleanToVisibilityConverter.cs" />
     <Compile Include="Converters\BooleanConverters\InvertedBooleanConverter.cs" />
+    <Compile Include="Converters\ValidationToColorConverter.cs" />
     <Compile Include="Converters\NavigationViewItemConverter.cs" />
     <Compile Include="Enum\HostEnum.cs" />
     <Compile Include="JsonSchemas\BlockchainResponse.cs" />
@@ -149,6 +150,7 @@
     <Compile Include="ViewModels\Accounts\AddAccountViewModel.cs" />
     <Compile Include="ViewModels\AdminSettingsViewModel.cs" />
     <Compile Include="ViewModels\Blockchain\BlockchainMainViewModel.cs" />
+    <Compile Include="ViewModels\Login\ConnectionSettingsViewModel.cs" />
     <Compile Include="ViewModels\Logs\LogsMainViewModel.cs" />
     <Compile Include="ViewModels\MainShellViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />

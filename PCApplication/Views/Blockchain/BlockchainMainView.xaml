@@ -13,6 +13,7 @@
     <Page.Resources>
         <converters:InvertedBooleanConverter x:Key="InvertedBooleanConverter"/>
         <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <converters:ValidationToColorConverter x:Key="ValidationToColorConverter"/>
         <DataTemplate x:Name="BlockListViewTemplate" x:DataType="models:Block">
             <Grid>
                 <Grid.RowDefinitions>
@@ -30,7 +31,7 @@
                          Margin="6"
                          VerticalAlignment="Center"
                          HorizontalAlignment="Center"
-                         Fill="LightGray"/>
+                         Fill="{Binding Validation, Converter={StaticResource ValidationToColorConverter}, Mode=OneWay}"/>
                 <TextBlock  Grid.Column="1"
                             Grid.Row="1"
                             Style="{ThemeResource BodyTextBlockStyle}"
@@ -137,6 +138,11 @@
                                     </TextBlock>
                                     <TextBlock  Style="{ThemeResource BodyTextBlockStyle}"
 									       >
+									    <Run FontWeight="Bold" Text="Nombre de validations: "/>
+									    <Run Text="{Binding Validation}"/>
+                                    </TextBlock>
+                                    <TextBlock  Style="{ThemeResource BodyTextBlockStyle}"
+									       >
 									    <Run FontWeight="Bold" Text="Hash: "/>
 									    <Run Text="{Binding Hash}"/>
                                     </TextBlock>
@@ -158,6 +164,7 @@
                                 </StackPanel>
                             </ScrollViewer>
                             <Border Grid.Row="1" Grid.ColumnSpan="2" BorderBrush="Silver" BorderThickness="0 1 0 1">
+
                             </Border>
                             <ScrollViewer Grid.Row="1">
                                 <StackPanel>

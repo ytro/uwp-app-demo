@@ -28,5 +28,8 @@ namespace PCApplication.JsonSchemas {
 
         [Newtonsoft.Json.JsonProperty("nonce", Required = Newtonsoft.Json.Required.Always)]
         public int Nonce { get; set; } // size_t
+
+        [Newtonsoft.Json.JsonProperty("validation", Required = Newtonsoft.Json.Required.Always)]
+        public int Validation { get; set; } // size_t
     }
 }

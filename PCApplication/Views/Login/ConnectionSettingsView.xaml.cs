@@ -1,4 +1,6 @@
-﻿using System;
+﻿using PCApplication.Common;
+using PCApplication.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -14,10 +16,15 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 
-namespace PCApplication.Views.Login {
+namespace PCApplication.Views {
     public sealed partial class ConnectionSettingsView : Page {
+        ConnectionSettingsViewModel ViewModel => DataContext as ConnectionSettingsViewModel;
+
         public ConnectionSettingsView() {
             this.InitializeComponent();
+
+            // Set the DataContext
+            DataContext = ServiceLocator.Instance.GetService<ConnectionSettingsViewModel>();
         }
     }
 }

@@ -20,12 +20,13 @@ namespace PCApplication.ViewModels {
     /// The viewmodel class for the Login view.
     /// </summary>
     public class LoginViewModel : ViewModelBase {
-        private readonly string _username = "admin";
+        private const string _username = "admin";
 
         public LoginViewModel(IRestService restService, INavigationService navigationService) {
             RestService = restService;
             NavigationService = navigationService;
             LoginCommand = new RelayCommand(LoginCommandExecute, LoginCommandCanExecute);
+            ViewConnectionSettingsCommand = new RelayCommand(ViewConnectionSettingsCommandExecute);
         }
 
         public IRestService RestService { get; }
@@ -58,8 +59,7 @@ namespace PCApplication.ViewModels {
         }
         private async void LoginCommandExecute() {
             IsBusy = true;
-            //bool loggedIn = await RestService.Login(_username, _password);
-            bool loggedIn = true;
+            bool loggedIn = await RestService.Login(_username, _password);
             if (loggedIn) {
                 NavigationService.Navigate<MainShellView>();
             } else {
@@ -67,5 +67,9 @@ namespace PCApplication.ViewModels {
             }
         }
 
+        public RelayCommand ViewConnectionSettingsCommand { get; }
+        private void ViewConnectionSettingsCommandExecute() {
+            NavigationService.Navigate<ConnectionSettingsView>();
+        }
     }
 }

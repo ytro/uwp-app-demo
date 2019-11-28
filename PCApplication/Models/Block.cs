@@ -17,14 +17,16 @@ namespace PCApplication.Models
         public DateTime Timestamp { get; set; } // time_t
         public string Hash { get; set; } // std::string
         public int Nonce { get; set; } // size_t
+        public int Validation { get; set; } //size_t
 
-        public Block(int index, string data, string previousHash, long timestamp, string hash, int nonce) {
+        public Block(int index, string data, string previousHash, long timestamp, string hash, int nonce, int validation) {
             Index = index;
             Data = new BlockData(data);
             PreviousHash = previousHash;
             Timestamp = new DateTime(1970, 1, 1).AddSeconds(timestamp);
             Hash = hash;
             Nonce = nonce;
+            Validation = validation;
         }
 
         public class BlockData 

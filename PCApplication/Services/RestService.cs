@@ -4,7 +4,9 @@ using NJsonSchema;
 using PCApplication.Configuration;
 using PCApplication.JsonSchemas;
 using PCApplication.UserControls;
+using System;
 using System.Diagnostics;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,24 +20,27 @@ namespace PCApplication.Services {
     /// 
 
     public class RestService : IRestService {
-        // Singleton HttpClient
-        private HttpClient _client = new HttpClient();
-        private string _token = "";
+        private HttpClient _client = new HttpClient(); // Singleton HttpClient
+        private string _token = "token";
 
-        public RestService() { }
-
+        #region Login
         public async Task<bool> Login(string username, string password) {
             string requestUri = ConfigManager.GetBaseServerUri() + "/usager/login";
-            try {
-                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, requestUri);
-
-                string json = new JObject
-                {
+            string json = new JObject
+{
                    { "usager", "admin" },
                    { "mot_de_passe", password}
                 }.ToString();
 
-                request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+            try {
+                HttpRequestMessage request = new HttpRequestMessage {
+                    Method = HttpMethod.Post,
+                    RequestUri = new Uri(requestUri),
+                    Headers = {
+                        { HttpRequestHeader.Authorization.ToString(), _token }
+                    },
+                    Content = new StringContent(json, Encoding.UTF8, "application/json")
+                };
 
                 HttpResponseMessage response = await _client.SendAsync(request);
 
@@ -53,64 +58,16 @@ namespace PCApplication.Services {
                     // Return deserialized JSON object
                     TokenResponse token = JsonConvert.DeserializeObject<TokenResponse>(responseContent);
                     this._token = token.AccessToken;
+
                     return true;
                 } else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400
-                    _ = DialogService.ShowAsync("Erreur 400:\n" + response.ToString(), title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Mauvaise requête", title: "Erreur 400", primary: "OK");
                     return false;
                 } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 403
-                    _ = DialogService.ShowAsync("Erreur 403:\n" + response.ToString(), title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Mauvais mot de passe", title: "Erreur 403", primary: "OK");
                     return false;
                 } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
-                    _ = DialogService.ShowAsync("Erreur 404: Non trouvé", title: "Erreur", primary: "OK");
-                    return false;
-                } else {
-                    _ = DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
-                    return false;
-                }
-            } catch {
-                return false;
-            }
-        }
-
-        public async Task<bool> Logout() {
-            string requestUri = ConfigManager.GetBaseServerUri() + "/admin/logout";
-            try {
-                HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, requestUri);
-                HttpResponseMessage response = await _client.SendAsync(request);
-                if (response.IsSuccessStatusCode) {
-                    return true;
-                }
-            } catch { }
-            return false;
-        }
-
-        public async Task<bool> ChangePassword(string oldPassword, string newPassword) {
-            string requestUri = ConfigManager.GetBaseServerUri() + "/admin/motdepasse";
-
-            // Prepare request
-            string json = new JObject
-            {
-                { "ancien", oldPassword },
-                { "nouveau", newPassword }
-            }.ToString();
-
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, requestUri);
-            request.Content = new StringContent(json, Encoding.UTF8, "application/json");
-
-            // Send request
-            try {
-                HttpResponseMessage response = await _client.SendAsync(request);
-
-                if (response.IsSuccessStatusCode) { // 200-299
-                    return true;
-                } else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400 Bad request
-                    _ = DialogService.ShowAsync("Erreur 400: Mauvaise requête", title: "Erreur", primary: "OK");
-                    return false;
-                } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 401 Unauthorized
-                    _ = DialogService.ShowAsync("Erreur 403: Non authorisé", title: "Erreur", primary: "OK");
-                    return false;
-                } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
-                    _ = DialogService.ShowAsync("Erreur 404: Non trouvé", title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Non trouvé", title: "Erreur 404", primary: "OK");
                     return false;
                 } else {
                     _ = DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
@@ -121,7 +78,75 @@ namespace PCApplication.Services {
                 return false;
             }
         }
+        #endregion
 
+        #region Logout
+        public async Task<bool> Logout() {
+            string requestUri = ConfigManager.GetBaseServerUri() + "/admin/logout";
+            try {
+                HttpRequestMessage request = new HttpRequestMessage {
+                    Method = HttpMethod.Post,
+                    RequestUri = new Uri(requestUri),
+                    Headers = {
+                        { HttpRequestHeader.Authorization.ToString(), _token }
+                    }
+                };
+                HttpResponseMessage response = await _client.SendAsync(request);
+                if (response.IsSuccessStatusCode) {
+                    return true;
+                }
+            } catch { }
+            return false;
+        }
+        #endregion
+
+        #region Mot de passe
+        public async Task<bool> ChangePassword(string oldPassword, string newPassword) {
+            string requestUri = ConfigManager.GetBaseServerUri() + "/admin/motdepasse";
+
+            // Prepare request
+            string json = new JObject
+            {
+                { "ancien", oldPassword },
+                { "nouveau", newPassword }
+            }.ToString();
+
+            HttpRequestMessage request = new HttpRequestMessage {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri(requestUri),
+                Headers = {
+                        { HttpRequestHeader.Authorization.ToString(), _token }
+                    },
+                Content = new StringContent(json, Encoding.UTF8, "application/json")
+            };
+
+            // Send request
+            try {
+                HttpResponseMessage response = await _client.SendAsync(request);
+
+                if (response.IsSuccessStatusCode) { // 200-299
+                    return true;
+                } else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400
+                    _ = DialogService.ShowAsync("Mauvaise requête", title: "Erreur 400", primary: "OK");
+                    return false;
+                } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 401
+                    _ = DialogService.ShowAsync("Non authorisé", title: "Erreur 401", primary: "OK");
+                    return false;
+                } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
+                    _ = DialogService.ShowAsync("Non trouvé", title: "Erreur 404", primary: "OK");
+                    return false;
+                } else {
+                    _ = DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
+                    return false;
+                }
+            } catch {
+                _ = DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
+                return false;
+            }
+        }
+        #endregion
+
+        #region Creation compte
         public async Task<bool> CreateAccount(string username, string password, bool isEditor) {
             string requestUri = ConfigManager.GetBaseServerUri() + "/admin/creationcompte";
 
@@ -133,8 +158,14 @@ namespace PCApplication.Services {
                 { "edition", isEditor }
             }.ToString();
 
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, requestUri);
-            request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+            HttpRequestMessage request = new HttpRequestMessage {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri(requestUri),
+                Headers = {
+                        { HttpRequestHeader.Authorization.ToString(), _token }
+                    },
+                Content = new StringContent(json, Encoding.UTF8, "application/json")
+            };
 
             // Send request
             try {
@@ -142,17 +173,20 @@ namespace PCApplication.Services {
 
                 if (response.IsSuccessStatusCode) { // 200-299
                     return true;
-                } else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400 Bad request
-                    _ = DialogService.ShowAsync("Erreur 400: Mauvaise requête", title: "Erreur", primary: "OK");
+                } else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400
+                    _ = DialogService.ShowAsync("Mauvaise requête", title: "Erreur 400", primary: "OK");
                     return false;
-                } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 401 Unauthorized
-                    _ = DialogService.ShowAsync("Erreur 403: Non authorisé", title: "Erreur", primary: "OK");
+                } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 401
+                    _ = DialogService.ShowAsync("Non authorisé", title: "Erreur 401", primary: "OK");
+                    return false;
+                } else if (response.StatusCode == System.Net.HttpStatusCode.Forbidden) { // 403
+                    _ = DialogService.ShowAsync("Non authorisé", title: "Erreur 403", primary: "OK");
                     return false;
                 } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
-                    _ = DialogService.ShowAsync("Erreur 404: Non trouvé", title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Non trouvé", title: "Erreur 404", primary: "OK");
                     return false;
                 } else if (response.StatusCode == System.Net.HttpStatusCode.Conflict) { // 409
-                    _ = DialogService.ShowAsync("Erreur 409: Un compte portant le même nom existe déjà", title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Un compte portant le même nom existe déjà", title: "Erreur 409", primary: "OK");
                     return false;
                 } else {
                     _ = DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
@@ -163,7 +197,9 @@ namespace PCApplication.Services {
                 return false;
             }
         }
+        #endregion
 
+        #region Suppression compte
         public async Task<bool> DeleteAccount(string username) {
             string requestUri = ConfigManager.GetBaseServerUri() + "/admin/suppressioncompte";
 
@@ -173,8 +209,14 @@ namespace PCApplication.Services {
                 { "usager", username }
             }.ToString();
 
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, requestUri);
-            request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+            HttpRequestMessage request = new HttpRequestMessage {
+                Method = HttpMethod.Post,
+                RequestUri = new Uri(requestUri),
+                Headers = {
+                        { HttpRequestHeader.Authorization.ToString(), _token }
+                    },
+                Content = new StringContent(json, Encoding.UTF8, "application/json")
+            };
 
             // Send request
             try {
@@ -182,14 +224,17 @@ namespace PCApplication.Services {
 
                 if (response.IsSuccessStatusCode) { // 200-299
                     return true;
-                } else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400 Bad request
-                    _ = DialogService.ShowAsync("Erreur 400: Mauvaise requête", title: "Erreur", primary: "OK");
+                } else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400
+                    _ = DialogService.ShowAsync("Mauvaise requête", title: "Erreur 400", primary: "OK");
                     return false;
-                } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 401 Unauthorized
-                    _ = DialogService.ShowAsync("Erreur 403: Non authorisé", title: "Erreur", primary: "OK");
+                } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 401
+                    _ = DialogService.ShowAsync("Non authorisé", title: "Erreur 401", primary: "OK");
+                    return false;
+                } else if (response.StatusCode == System.Net.HttpStatusCode.Forbidden) { // 403
+                    _ = DialogService.ShowAsync("Non authorisé", title: "Erreur 403", primary: "OK");
                     return false;
                 } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
-                    _ = DialogService.ShowAsync("Erreur 404: Non trouvé", title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Non trouvé", title: "Erreur 404", primary: "OK");
                     return false;
                 } else {
                     _ = DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
@@ -200,7 +245,9 @@ namespace PCApplication.Services {
                 return false;
             }
         }
+        #endregion
 
+        #region Chaine de blocs
         public async Task<BlockchainResponse> GetBlockchain(HostEnum source) {
             string requestUri = ConfigManager.GetBaseServerUri() + "/admin/chaine";
 
@@ -211,7 +258,13 @@ namespace PCApplication.Services {
             }
 
             // Prepare request
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, requestUri);
+            HttpRequestMessage request = new HttpRequestMessage {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri(requestUri),
+                Headers = {
+                        { HttpRequestHeader.Authorization.ToString(), _token }
+                }
+            };
 
             // Send request
             try {
@@ -225,7 +278,7 @@ namespace PCApplication.Services {
                     JsonSchema schema = JsonSchema.FromType<BlockchainResponse>();
                     var errors = schema.Validate(responseContent);
                     if (errors.Count > 0) {
-                        _ = DialogService.ShowAsync("Erreur: Réponse malformée du serveur", title: "Erreur", primary: "OK");
+                        _ = DialogService.ShowAsync("Réponse malformée du serveur", title: "Erreur", primary: "OK");
                         return null;
                     }
 
@@ -235,14 +288,14 @@ namespace PCApplication.Services {
                     // Return deserialized JSON object
                     return JsonConvert.DeserializeObject<BlockchainResponse>(responseContent);
 
-                } else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400 Bad request
-                    _ = DialogService.ShowAsync("Erreur 400: Mauvaise requête", title: "Erreur", primary: "OK");
+                } else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400
+                    _ = DialogService.ShowAsync("Mauvaise requête", title: "Erreur 400", primary: "OK");
                     return null;
-                } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 401 Unauthorized
-                    _ = DialogService.ShowAsync("Erreur 403: Non authorisé", title: "Erreur", primary: "OK");
+                } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 401
+                    _ = DialogService.ShowAsync("Non authorisé", title: "Erreur 401", primary: "OK");
                     return null;
                 } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
-                    _ = DialogService.ShowAsync("Erreur 404: Non trouvé", title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Non trouvé", title: "Erreur 404", primary: "OK");
                     return null;
                 } else {
                     _ = DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
@@ -253,8 +306,9 @@ namespace PCApplication.Services {
                 return null;
             }
         }
+        #endregion
 
-
+        #region Logs
         public async Task<LogsResponse> GetLogs(HostEnum source, int lastReceived) {
             string requestUri = ConfigManager.GetBaseServerUri() + "/admin/logs";
 
@@ -270,8 +324,14 @@ namespace PCApplication.Services {
                 { "dernier", lastReceived }
             }.ToString();
 
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, requestUri);
-            request.Content = new StringContent(json, Encoding.UTF8, "application/json");
+            HttpRequestMessage request = new HttpRequestMessage {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri(requestUri),
+                Headers = {
+                        { HttpRequestHeader.Authorization.ToString(), _token }
+                    },
+                Content = new StringContent(json, Encoding.UTF8, "application/json")
+            };
 
             // Send request
             try {
@@ -285,7 +345,7 @@ namespace PCApplication.Services {
                     JsonSchema schema = JsonSchema.FromType<LogsResponse>();
                     var errors = schema.Validate(responseContent);
                     if (errors.Count > 0) {
-                        _ = DialogService.ShowAsync("Erreur: Réponse malformée du serveur", title: "Erreur", primary: "OK");
+                        _ = DialogService.ShowAsync("Réponse malformée du serveur", title: "Erreur", primary: "OK");
                         return null;
                     }
 
@@ -296,13 +356,13 @@ namespace PCApplication.Services {
                     return JsonConvert.DeserializeObject<LogsResponse>(responseContent);
 
                 } else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400 Bad request
-                    _ = DialogService.ShowAsync("Erreur 400: Mauvaise requête", title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Mauvaise requête", title: "Erreur 400", primary: "OK");
                     return null;
                 } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 401 Unauthorized
-                    _ = DialogService.ShowAsync("Erreur 403: Non authorisé", title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Non authorisé", title: "Erreur 401", primary: "OK");
                     return null;
                 } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
-                    _ = DialogService.ShowAsync("Erreur 404: Non trouvé", title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Non trouvé", title: "Erreur 404", primary: "OK");
                     return null;
                 } else {
                     _ = DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
@@ -313,12 +373,20 @@ namespace PCApplication.Services {
                 return null;
             }
         }
+        #endregion
 
+        #region Usagers
         public async Task<UsersResponse> GetUsers() {
             string requestUri = ConfigManager.GetBaseServerUri() + "/users";
 
             // Prepare request
-            HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Get, requestUri);
+            HttpRequestMessage request = new HttpRequestMessage {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri(requestUri),
+                Headers = {
+                        { HttpRequestHeader.Authorization.ToString(), _token }
+                }
+            };
 
             // Send request
             try {
@@ -332,7 +400,7 @@ namespace PCApplication.Services {
                     JsonSchema schema = JsonSchema.FromType<UsersResponse>();
                     var errors = schema.Validate(responseContent);
                     if (errors.Count > 0) {
-                        _ = DialogService.ShowAsync("Erreur: Mauvaise malformée du serveur", title: "Erreur", primary: "OK");
+                        _ = DialogService.ShowAsync("Mauvaise malformée du serveur", title: "Erreur", primary: "OK");
                         return null;
                     }
 
@@ -340,13 +408,13 @@ namespace PCApplication.Services {
                     return JsonConvert.DeserializeObject<UsersResponse>(responseContent);
 
                 } else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest) { // 400 Bad request
-                    _ = DialogService.ShowAsync("Erreur 400: Mauvaise requête", title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Mauvaise requête", title: "Erreur 400", primary: "OK");
                     return null;
                 } else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized) { // 401 Unauthorized
-                    _ = DialogService.ShowAsync("Erreur 403: Non authorisé", title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Non authorisé", title: "Erreur 401", primary: "OK");
                     return null;
                 } else if (response.StatusCode == System.Net.HttpStatusCode.NotFound) { // 404
-                    _ = DialogService.ShowAsync("Erreur 404: Non trouvé", title: "Erreur", primary: "OK");
+                    _ = DialogService.ShowAsync("Non trouvé", title: "Erreur 404", primary: "OK");
                     return null;
                 } else {
                     _ = DialogService.ShowAsync("Erreur de connection", title: "Erreur", primary: "OK");
@@ -357,6 +425,7 @@ namespace PCApplication.Services {
                 return null;
             }
         }
+        #endregion
     }
 
     public interface IRestService {
