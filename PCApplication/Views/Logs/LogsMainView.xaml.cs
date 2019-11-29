@@ -14,7 +14,6 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using PCApplication.Common;
 using PCApplication.ViewModels;
-using Windows.UI.Xaml.Controls;
 
 namespace PCApplication.Views {
 
@@ -31,8 +30,8 @@ namespace PCApplication.Views {
         }
 
         private void Actualiser_Click(object sender, RoutedEventArgs e) {
-           // if (menuActualiser.IsOpen)
-             //   menuActualiser.Hide();
+            if (menuActualiser.IsOpen)
+                menuActualiser.Hide();
         }
 
         private void MenuFlyoutItem1_Click(object sender, RoutedEventArgs e) {
@@ -51,9 +50,30 @@ namespace PCApplication.Views {
             ViewModel.FetchLogs(HostEnum.WebServer);
         }
 
-        private void Filtrer_Click(object sender, RoutedEventArgs e) {
-            if (menuFiltrer.IsOpen)
-                menuFiltrer.Hide();
+        private void FilterRadioButton_Checked(object sender, RoutedEventArgs e) {
+            RadioButton rb = sender as RadioButton;
+            HostEnum host = HostEnum.Undefined;
+            if (rb != null) {
+                string tag = rb.Tag.ToString();
+                switch (tag) {
+                    case "None":
+                        host = HostEnum.Undefined;
+                        break;
+                    case "Mineur 1":
+                        host = HostEnum.Miner1;
+                        break;
+                    case "Mineur 2":
+                        host = HostEnum.Miner2;
+                        break;
+                    case "Mineur 3":
+                        host = HostEnum.Miner3;
+                        break;
+                    case "Serveur web":
+                        host = HostEnum.WebServer;
+                        break;
+                }
+                ViewModel?.FilterLogsBySource(host);
+            }
         }
 
         private void TextBox_TextChanged(object sender, TextChangedEventArgs e)

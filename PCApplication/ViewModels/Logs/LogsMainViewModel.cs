@@ -14,13 +14,12 @@ namespace PCApplication.ViewModels {
     /// </summary>
     public class LogsMainViewModel : ViewModelBase {
 
-        // Last received log number from server
-        private int _lastReceived = 0;
+        // log source filter
+        private HostEnum _filter = HostEnum.Undefined;
 
         public LogsMainViewModel(IRestService restService) {
             RestService = restService;
-           // FetchLogsCommand = new RelayCommand(FetchLogsCommandExecute, FetchLogsCommandCanExecute);
-        }
+       }
 
         IRestService RestService { get; }
 
@@ -31,14 +30,6 @@ namespace PCApplication.ViewModels {
                 RaisePropertyChanged();
             }
         }
-
-       /* public Dictionary<HostEnum, string> HostsList { get; } = new Dictionary<HostEnum, string>()
-        {
-            {HostEnum.Miner1, "Mineur 1"},
-            {HostEnum.Miner2, "Mineur 2"},
-            {HostEnum.Miner3, "Mineur 3"},
-            {HostEnum.WebServer, "Serveur Web"}
-        };*/
 
         private HostEnum _selectedSource = HostEnum.WebServer;
         public HostEnum SelectedSource {
@@ -55,43 +46,25 @@ namespace PCApplication.ViewModels {
             set {
                 _isBusy = value;
                 RaisePropertyChanged();
-               // FetchLogsCommand.RaiseCanExecuteChanged();
             }
         }
-
-        /*   public RelayCommand FetchLogsCommand { get; }
-           private bool FetchLogsCommandCanExecute() {
-               return !IsBusy;
-           }*/
-
-        /*   private async void FetchLogsCommandExecute() {
-               IsBusy = true;
-
-               LogsSchema.RootObject response = await RestService.GetLogs(_selectedSource, _lastReceived);
-
-               if (response != null) {
-                   // Add reponse items for the sake of testing
-                   for (int i = 0; i < 500; i++)
-                       LogContext.Instance.Update(response, _selectedSource);
-
-                   DisplayText = LogContext.Instance.GetLogsText(_selectedSource);
-               }
-
-               IsBusy = false;
-           }*/
 
         public async void FetchLogs(HostEnum host) {
             IsBusy = true;
 
-            LogsResponse response = await RestService.GetLogs(host, _lastReceived);
+            LogsResponse response = await RestService.GetLogs(host, LogContext.Instance.GetLastReceived(host));
 
             if (response != null) {
-                _lastReceived = LogContext.Instance.Update(response, host);
-               // DisplayText = LogContext.Instance.GetLogsText(host);
-                DisplayText = LogContext.Instance.GetLogsText();
+                LogContext.Instance.Update(response, host);
+                DisplayText = LogContext.Instance.GetLogsText(_filter);
             }
 
             IsBusy = false;
+        }
+
+        public void FilterLogsBySource(HostEnum host) {
+            _filter = host;
+            DisplayText = LogContext.Instance.GetLogsText(_filter);
         }
     }
 }

@@ -5,10 +5,55 @@
     xmlns:local="using:PCApplication.Views.Accounts"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:PCApplication.ViewModels"
+    xmlns:converters="using:PCApplication.Converters"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+    <Page.Resources>
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Page.Resources>
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="36"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <CommandBar IsDynamicOverflowEnabled="False" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" VerticalAlignment="Center" Grid.Row="0" DefaultLabelPosition="Right" Background="Transparent">
+            <CommandBar.Content>
+                <ProgressRing IsActive="{Binding IsBusy}" />
+            </CommandBar.Content>
+            <AppBarButton x:Name="buttonNew" Icon="Add" Label="Ajouter compte" LabelPosition="Default" HorizontalAlignment="Left" Command="{Binding AddAccountCommand}" />
+            <AppBarButton x:Name="buttonDelete" Icon="Delete" Label="Supprimer compte" LabelPosition="Default" HorizontalAlignment="Left" Command="{Binding DeleteAccountCommand}" />
+            <AppBarSeparator/>
+            <AppBarButton Icon="Refresh" Command="{Binding RefreshAccountsCommand}" Label="Actualiser les comptes" LabelPosition="Default" />
 
+        </CommandBar>
+        <ListView Grid.Row="1" 
+                  ItemsSource="{Binding Path=DisplayedAccounts}"
+                  SelectedItem="{Binding SelectedAccount, Mode=TwoWay}">
+            <ListView.HeaderTemplate>
+                <DataTemplate>
+                    <Grid Padding="12" Background="{ThemeResource SystemBaseLowColor}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="360"/>
+                            <ColumnDefinition Width="360"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Text="Nom d'usager" Style="{ThemeResource CaptionTextBlockStyle}"/>
+                        <TextBlock Grid.Column="1" Text="Mode édition" Style="{ThemeResource CaptionTextBlockStyle}"/>
+                    </Grid>
+                </DataTemplate>
+            </ListView.HeaderTemplate>
+            <ListView.ItemTemplate>
+                <DataTemplate x:Name="compteDataTemplate" x:DataType="vm:AccountViewModel">
+                    <Grid Height="48">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="360"/>
+                            <ColumnDefinition Width="360"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock VerticalAlignment="Center" Style="{ThemeResource BaseTextBlockStyle}" Text="{Binding Username}" />
+                        <FontIcon Visibility="{Binding Edition, Converter={StaticResource BooleanToVisibilityConverter}}" Glyph="&#xE10B;" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                    </Grid>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </Grid>
 </Page>

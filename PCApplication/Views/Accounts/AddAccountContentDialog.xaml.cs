@@ -1,4 +1,5 @@
-﻿using PCApplication.ViewModels;
+﻿using PCApplication.Common;
+using PCApplication.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,20 +14,19 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using PCApplication.Common;
 
 namespace PCApplication.Views {
+    public sealed partial class AddAccountContentDialog : ContentDialog {
 
-    public sealed partial class AccountsMainView : Page {
-        AccountsMainViewModel ViewModel => DataContext as AccountsMainViewModel;
+        AddAccountViewModel ViewModel => DataContext as AddAccountViewModel;
 
-        public AccountsMainView() {
+
+        public AddAccountContentDialog(object dataContext) {
             this.InitializeComponent();
 
-            NavigationCacheMode = NavigationCacheMode.Required;
-
-            //Set the DataContext
-            DataContext = ServiceLocator.Instance.GetService<AccountsMainViewModel>();
+            // Set the DataContext
+            DataContext = dataContext;
         }
+
     }
 }

@@ -12,31 +12,59 @@ namespace PCApplication.Configuration {
     /// 
     /// </summary>
     public class ConfigManager {
+        private const string DefaultServerIP = "127.0.0.1";
+        private const string DefaultServerPort = "443";
         private const string configFilename = "config.ini";
 
         public static Dictionary<string, string> Config { get; private set; }
 
-
         public static bool LoadConfig() {
             Config = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+
+            // If config file doesn't exist locally, create a new one
             if (!File.Exists(Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, configFilename))) {
                 Create(configFilename);
-                return false;
-            }
-            foreach (string line in File.ReadLines(Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, configFilename))) {
-                string text = line.Trim();
-                if (!text.StartsWith("#")) {
-                    string[] array = text.Split(new char[] { '=' });
-                    Config.Add(array[0], array[1]);
+            } else { // Else read from file
+                foreach (string line in File.ReadLines(Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, configFilename))) {
+                    string text = line.Trim();
+                    if (!text.StartsWith("#")) {
+                        string[] array = text.Split(new char[] { '=' });
+                        Config.Add(array[0], array[1]);
+                    }
                 }
             }
+            if (!Config.ContainsKey("ServerIP"))
+                Config.Add("ServerIP", DefaultServerIP);
+
+            if (!Config.ContainsKey("Port"))
+                Config.Add("Port", DefaultServerPort);
+
             return true;
+        }
+
+        public static string GetServerIP() {
+            return GetValueFromKey("ServerIP");
+        }
+
+        public static string GetPort() {
+            return GetValueFromKey("Port");
+
         }
 
         private static void Create(string configFilename) {
             StringBuilder sr = new StringBuilder();
-            sr.AppendLine("ServerIP=127.0.0.1");
-            sr.AppendLine("Port=8080");
+            sr.AppendLine($"ServerIP={DefaultServerIP}");
+            sr.AppendLine($"Port={DefaultServerPort}");
+            File.WriteAllText(Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, configFilename), sr.ToString());
+        }
+
+        public static void Update(string serverIP, string port) {
+            Config["ServerIP"] = serverIP;
+            Config["Port"] = port;
+
+            StringBuilder sr = new StringBuilder();
+            sr.AppendLine($"ServerIP={serverIP}");
+            sr.AppendLine($"Port={port}");
             File.WriteAllText(Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, configFilename), sr.ToString());
         }
 
@@ -53,8 +81,11 @@ namespace PCApplication.Configuration {
 
 
         public static string GetBaseServerUri() {
-            //return $"https://{GetValueFromKey("ServerIP")}:{GetValueFromKey("port")}";
-            return $"https://p3.thephosphorus.dev"; 
+            string Port = GetValueFromKey("Port");
+            if (Port == "")
+                return $"https://{GetValueFromKey("ServerIP")}";
+            else
+                return $"https://{GetValueFromKey("ServerIP")}:{GetValueFromKey("Port")}";
         }
     }
 }

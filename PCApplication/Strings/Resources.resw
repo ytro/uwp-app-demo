@@ -182,6 +182,44 @@
 	]
 }</value>
   </data>
+  <data name="mockValidBlockchain" xml:space="preserve">
+    <value>{
+  "Blocks": [
+    {
+      "data": "GenesysBlock",
+      "hash": "778b27c029f38b6aa214c467a86e51ec87e560ff6f3bc155648ec33d8da9f2c2b43834e4e6b22a3b1f5618a94d5c583387bb5f55c6b8aaf9dbf1ca4e63f880",
+      "index": 0,
+      "nonce": 0,
+      "prevHash": "NOHASH",
+      "timestamp": 1574467758
+    },
+    {
+"data": "{\"nom\":\"Help\",\"resultats\":[{\"matricule\":\"1842322\",\"nom\":\"string\",\"note\":\"A\",\"prenom\":\"string\"},{\"matricule\":\"1842322\",\"nom\":\"string\",\"note\":\"A\",\"prenom\":\"string\"},{\"matricule\":\"1842322\",\"nom\":\"string\",\"note\":\"A\",\"prenom\":\"string\"},{\"matricule\":\"1842322\",\"nom\":\"string\",\"note\":\"A\",\"prenom\":\"string\"},{\"matricule\":\"1842322\",\"nom\":\"string\",\"note\":\"A\",\"prenom\":\"string\"},{\"matricule\":\"1842322\",\"nom\":\"string\",\"note\":\"A\",\"prenom\":\"string\"},{\"matricule\":\"1842322\",\"nom\":\"string\",\"note\":\"A\",\"prenom\":\"string\"},{\"matricule\":\"1842322\",\"nom\":\"string\",\"note\":\"A\",\"prenom\":\"string\"},{\"matricule\":\"1842322\",\"nom\":\"string\",\"note\":\"A\",\"prenom\":\"string\"},{\"matricule\":\"1842322\",\"nom\":\"string\",\"note\":\"A\",\"prenom\":\"string\"},{\"matricule\":\"1842322\",\"nom\":\"string\",\"note\":\"A\",\"prenom\":\"string\"},{\"matricule\":\"1842322\",\"nom\":\"string\",\"note\":\"A\",\"prenom\":\"string\"},{\"matricule\":\"1842322\",\"nom\":\"string\",\"note\":\"A\",\"prenom\":\"string\"},{\"matricule\":\"1842322\",\"nom\":\"string\",\"note\":\"A\",\"prenom\":\"string\"},{\"matricule\":\"1842322\",\"nom\":\"string\",\"note\":\"A\",\"prenom\":\"string\"}],\"sigle\":\"INF1005\",\"trimestre\":20191}",
+      "hash": "3eb1318892956b1c42ef5c1f22fe6ab51569729c53e981fb65814a48639511a9130b97a6b82e8ec7bead7574859ee1e6266955c3ac061c683a36a4388f6240",
+      "index": 1,
+      "nonce": 0,
+      "prevHash": "778b27c029f38b6aa214c467a86e51ec87e560ff6f3bc155648ec33d8da9f2c2b43834e4e6b22a3b1f5618a94d5c583387bb5f55c6b8aaf9dbf1ca4e63f880",
+      "timestamp": 1574533734
+    },
+    {
+      "data": "{\"nom\":\"Help\",\"resultats\":[{\"matricule\":\"1842322\",\"nom\":\"string\",\"note\":\"A\",\"prenom\":\"string\"}],\"sigle\":\"INF1005\",\"trimestre\":20191}",
+      "hash": "04eb4031da3b41c53b5330391f5989e26c64cd44de5d29bd97cc3787165ae7afc44ebb99dc1cbaa70bab1e2ae2639588eb648af20103e829f12ddb37b99e0f0",
+      "index": 2,
+      "nonce": 231,
+      "prevHash": "3eb1318892956b1c42ef5c1f22fe6ab51569729c53e981fb65814a48639511a9130b97a6b82e8ec7bead7574859ee1e6266955c3ac061c683a36a4388f6240",
+      "timestamp": 1574533800
+    },
+    {
+      "data": "{\"nom\":\"Help\",\"resultats\":[{\"matricule\":\"1842322\",\"nom\":\"string\",\"note\":\"A\",\"prenom\":\"string\"}],\"sigle\":\"INF1005\",\"trimestre\":20191}",
+      "hash": "247b6dc2454881bd5e7154f7f525ef1d3e1052c53ca30404ccdb1b859e5656cc2a1fc1b8136491ac1ee5e04a236cabc1f1e19162118bbc28b49f127c0",
+      "index": 3,
+      "nonce": 1,
+      "prevHash": "04eb4031da3b41c53b5330391f5989e26c64cd44de5d29bd97cc3787165ae7afc44ebb99dc1cbaa70bab1e2ae2639588eb648af20103e829f12ddb37b99e0f0",
+      "timestamp": 1574533816
+    }
+  ]
+}</value>
+  </data>
   <data name="mockValidLogsJson" xml:space="preserve">
     <value>{
 	"information": [
@@ -248,5 +286,19 @@
 	]
 }</value>
     <comment>{\"information\": [{\"no\": 1,\"severite\": \"severite1\", \"heure\": \"heure1\",\"message\": \"message1\"},{\"no\": 2,\"severite\": \"severite2\", \"heure\": \"heure2\",\"message\": \"message2\"},{\"no\": 3,\"severite\": \"severite3\", \"heure\": \"heure3\",\"message\": \"message3\"},{\"no\": 4,\"severite\": \"severite4\", \"heure\": \"heure4\",\"message\": \"message4\"},{\"no\": 5,\"severite\": \"severite5\", \"heure\": \"heure5\",\"message\": \"message5\"},{\"no\": 6,\"severite\": \"severite6\", \"heure\": \"heure6\",\"message\": \"message6\"},{\"no\": 7,\"severite\": \"severite7\", \"heure\": \"heure7\",\"message\": \"message7\"},{\"no\": 8,\"severite\": \"severite8\", \"heure\": \"heure8\",\"message\": \"message8\"},{\"no\": 9,\"severite\": \"severite9\", \"heure\": \"heure9\",\"message\": \"message9\"},{\"no\": 10,\"severite\": \"severite10\", \"heure\": \"heure10\",\"message\": \"message10\"}]}</comment>
+  </data>
+  <data name="mockValidUsersJson" xml:space="preserve">
+    <value>{
+	"comptes" : [
+		{
+			"usager" : "nomdelusager1",
+			"edition": true
+		},
+		{
+			"usager" : "nomdelusager2",
+			"edition": false
+		}
+	]
+}</value>
   </data>
 </root>
