@@ -15,16 +15,18 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-
 namespace PCApplication.Views {
-    public sealed partial class ConnectionSettingsView : Page {
-        ConnectionSettingsViewModel ViewModel => DataContext as ConnectionSettingsViewModel;
+    public sealed partial class DeleteAccountContentDialog : ContentDialog {
 
-        public ConnectionSettingsView() {
+        DeleteAccountViewModel ViewModel => DataContext as DeleteAccountViewModel;
+
+
+        public DeleteAccountContentDialog(object dataContext) {
             this.InitializeComponent();
 
             // Set the DataContext
-            DataContext = ServiceLocator.Instance.GetService<ConnectionSettingsViewModel>();
+            DataContext = dataContext;
         }
+
     }
 }

@@ -41,7 +41,7 @@
                 Style="{StaticResource TitleTextBlockStyle}"
                 Grid.Row="1"/>
 
-            <TextBlock Text="Ancien mot de passe" Grid.Row="2"/>
+            <TextBlock Text="Ancien mot de passe" Grid.Row="2" Margin="0,0,0,4"/>
 
             <PasswordBox
                 Name="OldPassword"
@@ -51,7 +51,7 @@
                 Margin="0,0,0,4"
                 Grid.Row="3" />
 
-            <TextBlock Text="Nouveau mot de passe" Grid.Row="4"/>
+            <TextBlock Text="Nouveau mot de passe" Grid.Row="4" Margin="0,0,0,4"/>
 
             <PasswordBox
                 Name="NewPassword"

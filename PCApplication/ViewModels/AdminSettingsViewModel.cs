@@ -33,6 +33,7 @@ namespace PCApplication.ViewModels {
                 // Cleanup the models
                 LogContext.Cleanup();
                 AccountContext.Cleanup();
+                Blockchain.Cleanup();
 
                 // Reset the Navigation frame to the root frame (in Window.Current.Content)
                 NavigationService.Initialize(Window.Current.Content as Frame);

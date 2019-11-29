@@ -19,6 +19,8 @@
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
 
+        <AppBarButton Icon="Setting" HorizontalAlignment="Right" Command="{Binding ViewConnectionSettingsCommand}"/>
+
         <Grid 
             Name="ContentGrid" 
             Padding="12,20"

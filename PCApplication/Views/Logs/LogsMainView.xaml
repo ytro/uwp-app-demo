@@ -19,18 +19,23 @@
             <RowDefinition Height="36"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
+        
         <CommandBar IsDynamicOverflowEnabled="False" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" VerticalAlignment="Center" Grid.Row="0" DefaultLabelPosition="Right" Background="Transparent">
             <CommandBar.Content>
                 <ProgressRing IsActive="{Binding IsBusy}" />
             </CommandBar.Content>
-            <AppBarButton Icon="Filter" Click="Filtrer_Click" Label="Filtrer la provenance" LabelPosition="Default" IsEnabled="{Binding IsBusy,Mode=OneWay, Converter={StaticResource InvertedBooleanConverter}}">
+
+            <AppBarButton Icon="Filter" Label="Filtrer l'affichage" LabelPosition="Default" IsEnabled="{Binding IsBusy,Mode=OneWay, Converter={StaticResource InvertedBooleanConverter}}">
                 <AppBarButton.Flyout>
-                    <MenuFlyout x:Name="menuFiltrer">
-                        <MenuFlyoutItem Text="Mineur 1"/>
-                        <MenuFlyoutItem Text="Mineur 2"/>
-                        <MenuFlyoutItem Text="Mineur 3"/>
-                        <MenuFlyoutItem Text="Serveur web" />
-                    </MenuFlyout>
+                    <Flyout>
+                        <StackPanel Orientation="Vertical" >
+                            <RadioButton Content="Aucun filtrage" Tag="None" Checked="FilterRadioButton_Checked" IsChecked="True"/>
+                            <RadioButton Content="Mineur 1" Tag="Mineur 1" Checked="FilterRadioButton_Checked"/>
+                            <RadioButton Content="Mineur 2" Tag="Mineur 2" Checked="FilterRadioButton_Checked"/>
+                            <RadioButton Content="Mineur 3" Tag="Mineur 3" Checked="FilterRadioButton_Checked"/>
+                            <RadioButton Content="Serveur web" Tag="Serveur web" Checked="FilterRadioButton_Checked"/>
+                        </StackPanel>
+                    </Flyout>
                 </AppBarButton.Flyout>
             </AppBarButton>
             <AppBarSeparator/>
