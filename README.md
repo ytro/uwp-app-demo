@@ -2,7 +2,7 @@
 
 ## Intro
 
-This is an application I had to develop from scratch, fully in solo, for the course INF3995 (final project of third year of engineering).  
+This is an application I developed from scratch, fully in solo, for the course INF3995 (final project of third year of engineering) - although the scope of the full project was larger than this project alone.  
 
 It is a MVVM client app made for UWP (now deprecated), but uses similar systems to an ASP.NET Core app.
 
